@@ -1,0 +1,75 @@
+﻿@page "~/manager/navigation/menu/{routeAction}/{id}"
+@using SoundInTheory.Piranha.Navigation
+@model SoundInTheory.Piranha.Navigation.Areas.Manager.Pages.Navigation.MenuEditModel
+@{
+    ViewBag.Title = "Edit Menu";
+    ViewBag.MenuItem = "NavigationMenus";
+    var action = ((string)RouteData.Values["routeAction"]).ToLower();
+    var menuId = (string)RouteData.Values["id"];
+    var assetVersion = Piranha.Utils.GetAssemblyVersionHash(typeof(MenuModule).Assembly);
+}
+@section script
+{
+    <link href="~/manager/navigation/assets/css/menu-edit.css" rel="stylesheet" type="text/css" />
+
+    <script src="~/manager/assets/js/piranha.components.min.js?v=@assetVersion"></script>
+    <script src="~/manager/navigation/assets/js/permissions.js?v=@assetVersion"></script>
+    <script src="~/manager/navigation/assets/js/link-modal.js?v=@assetVersion"></script>
+    <script src="~/manager/navigation/assets/js/menu-edit.js?v=@assetVersion"></script>
+
+    <script type="text/javascript">
+        piranha.navigation.permissions.load().then(() => {
+            piranha.navigation.menuedit.load("@menuId");
+        });
+    </script>
+}
+@section partials
+{
+
+}
+
+<div id="menuedit">
+    <div class="top">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">Navigation</li>
+                <li class="breadcrumb-item"><a href="/manager/navigation/menus">Menus</a></li>
+                <li class="breadcrumb-item active" aria-current="Edit">Edit</li>
+            </ol>
+        </nav>
+        <div class="container-fluid">
+            <div class="top-nav">
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid app" :class="{ ready: !loading }">
+        <div class="row">
+            <div class="col">
+                <div class="menu-edit" v-if="menu != null">
+                    <div class="nav-menu-item header-item" v-bind:key="menu.id">
+                        <div class="handle"><i class="fas fa-sitemap"></i></div>
+                        <div class="link">
+                            <span class="title">{{ menu.title }} <small style="display:none">(<code>{{ menu.slug }}</code>)</small></span>
+                        </div>
+                        <div>
+                            <button v-if="piranha.navigation.permissions.menus.editItems" id="pageGroup" type="button" v-on:click.prevent="piranha.navigation.menuedit.addItem(null)" class="btn btn-sm btn-primary btn-labeled">
+                                <i class="fas fa-plus"></i>
+                                Add menu item
+                            </button>
+                        </div>
+                    </div>
+                    <div class="menu-container dd" :data-id="menu.id">
+                        <ol class="dd-list">
+                            <navigation-menu-item v-for="item in menu.items" v-bind:key="item.id" v-bind:item="item" v-bind:menu="menu" v-bind:level="1"></navigation-menu-item>
+                        </ol>
+                    </div>
+                    <div class="empty-info" v-if="!menu.items || menu.items.length == 0">
+                        <p>{{ piranha.resources.texts.emptyAddAbove }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,63 @@
+﻿<div class="modal modal-panel fade" id="linkfieldmodal">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+             <!-- Modal Header -->
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title"><i class="fas fa-copy"></i> Link</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+             <!-- Modal Body -->
+            <div v-if="model">
+                <div class="modal-body bg-light">
+                    <div class="d-flex flex-row form-group mb-2">
+                        <div class="flex-shrink-0 align-self-center pr-2 font-weight-bold">
+                            <label class="text-right mb-0" for="model.value">URL</label>
+                        </div>
+                        <input class="form-control" type="text" v-model="model.value" v-on:change="update()">
+                    </div>
+                    <div class="d-flex flex-row form-group mb-2">
+                        <div class="flex-shrink-0 align-self-center pr-2 font-weight-bold">
+                            <label class="text-right mb-0" for="model.linkFieldSettings.title">Link Text</label>
+                        </div>
+                        <input class="form-control" type="text" v-model="model.linkFieldSettings.title">
+                    </div>
+                    <div>
+                        <h3>Page Select</h3>
+                        <link-field-selector :model="model"></link-field-selector>
+                    </div>
+                    <a href="#" v-on:click="toggleAdvancedSettings()">{{showAdvancedSettingsText}}</a>
+                    <div v-if="showAdvancedSettings">
+                        <div class="row">
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="model.linkFieldSettings.noFollow">nofollow?</label>
+                                    <input class="form-control mb-2" type="checkbox" v-model="model.linkFieldSettings.noFollow"/>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="model.linkFieldSettings.target">Target</label>
+                                    <select class="form-control mb-2" v-model="model.linkFieldSettings.target">
+                                        <option v-for="option in model.linkFieldSettings.targetOptions">{{option}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label for="model.linkFieldSettings.class">Class</label>
+                                    <input class="form-control" type="text" v-model="model.linkFieldSettings.class" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="btn btn-primary mt-2" v-on:click="save()">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

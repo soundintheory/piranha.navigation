@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="6.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Piranha" Version="10.3.0" />
+    <PackageReference Include="Piranha.AspNetCore" Version="10.3.0" />
+    <PackageReference Include="Piranha.AspNetCore.Identity.SQLite" Version="10.3.0" />
+    <PackageReference Include="Piranha.AttributeBuilder" Version="10.3.0" />
+    <PackageReference Include="Piranha.Data.EF.SQLite" Version="10.3.0" />
+    <PackageReference Include="Piranha.ImageSharp" Version="10.3.0" />
+    <PackageReference Include="Piranha.Local.FileStorage" Version="10.3.0" />
+    <PackageReference Include="Piranha.Manager" Version="10.3.0" />
+    <PackageReference Include="Piranha.Manager.LocalAuth" Version="10.3.0" />
+    <PackageReference Include="Piranha.Manager.TinyMCE" Version="10.3.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.0">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\modules\SoundInTheory.Piranha.Navigation.Links\SoundInTheory.Piranha.Navigation.Links.csproj" />
+    <ProjectReference Include="..\..\modules\SoundInTheory.Piranha.Navigation.Menus\SoundInTheory.Piranha.Navigation.Menus.csproj" />
+  </ItemGroup>
+  
+</Project>

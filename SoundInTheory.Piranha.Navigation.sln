@@ -1,0 +1,51 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32519.379
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NavigationMvcExample", "examples\NavigationMvcExample\NavigationMvcExample.csproj", "{F2718220-2DB4-4A00-BE0F-EBB63D9C1978}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoundInTheory.Piranha.Navigation.Links", "modules\SoundInTheory.Piranha.Navigation.Links\SoundInTheory.Piranha.Navigation.Links.csproj", "{347BCD0C-C794-43FA-9F51-76336A64D527}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoundInTheory.Piranha.Navigation.Menus", "modules\SoundInTheory.Piranha.Navigation.Menus\SoundInTheory.Piranha.Navigation.Menus.csproj", "{3C040942-256B-4601-B90F-5EC4FACE7CCD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{41CE781B-645F-4646-87E4-B3B8E74A8F2D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "examples", "examples", "{0835BF88-028C-4371-87C8-BAC030B876BC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{15DF4703-2878-4279-BBD8-F0F4A4144E44}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F2718220-2DB4-4A00-BE0F-EBB63D9C1978}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F2718220-2DB4-4A00-BE0F-EBB63D9C1978}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F2718220-2DB4-4A00-BE0F-EBB63D9C1978}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F2718220-2DB4-4A00-BE0F-EBB63D9C1978}.Release|Any CPU.Build.0 = Release|Any CPU
+		{347BCD0C-C794-43FA-9F51-76336A64D527}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{347BCD0C-C794-43FA-9F51-76336A64D527}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{347BCD0C-C794-43FA-9F51-76336A64D527}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{347BCD0C-C794-43FA-9F51-76336A64D527}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3C040942-256B-4601-B90F-5EC4FACE7CCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3C040942-256B-4601-B90F-5EC4FACE7CCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3C040942-256B-4601-B90F-5EC4FACE7CCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3C040942-256B-4601-B90F-5EC4FACE7CCD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F2718220-2DB4-4A00-BE0F-EBB63D9C1978} = {0835BF88-028C-4371-87C8-BAC030B876BC}
+		{347BCD0C-C794-43FA-9F51-76336A64D527} = {15DF4703-2878-4279-BBD8-F0F4A4144E44}
+		{3C040942-256B-4601-B90F-5EC4FACE7CCD} = {15DF4703-2878-4279-BBD8-F0F4A4144E44}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AE981148-38F2-462A-93FF-4C2B7862EBD6}
+	EndGlobalSection
+EndGlobal

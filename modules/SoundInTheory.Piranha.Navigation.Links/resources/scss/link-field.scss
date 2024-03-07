@@ -1,0 +1,74 @@
+@import '../../node_modules/@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4';
+
+.link-field {
+
+    .input {
+        flex: 1;
+    }
+
+    .form-control {
+        white-space: nowrap;
+        display: block;
+        text-decoration: none;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        .hover {
+            display: none;
+            opacity: .3;
+        }
+
+        .display {
+            text-decoration: underline;
+        }
+
+        &:hover {
+            .display {
+                text-decoration: none;
+            }
+
+            .hover {
+                display: inline;
+            }
+        }
+    }
+}
+
+#linkfieldmodal {
+
+    .input-group-text.form-check {
+        padding-left: 2rem;
+    }
+
+    .select2-container--bootstrap4 {
+        .select2-selection {
+            -webkit-box-shadow: none;
+            box-shadow: none;
+        }
+
+        &.select2-container--open {
+            .select2-dropdown {
+                border-color: #80bdff;
+            }
+
+            .select2-selection {
+                border-color: #80bdff;
+                border-bottom: none;
+            }
+        }
+
+        .select2-results__message {
+            display: none !important;
+        }
+    }
+
+    .select2-dropdown-inline {
+        .select2-container,
+        .select2-dropdown {
+            position: relative !important;
+            top: 0 !important;
+            left: 0 !important;
+        }
+    }
+}
