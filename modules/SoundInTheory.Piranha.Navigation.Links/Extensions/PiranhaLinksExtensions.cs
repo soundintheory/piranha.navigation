@@ -60,14 +60,14 @@ public static class PiranhaLinksExtensions
         builder.UseStaticFiles(new StaticFileOptions
         {
             FileProvider = FileProvider,
-            RequestPath = "/manager/Links/assets"
+            RequestPath = "/manager/Navigation/assets"
         });
 
         App.Fields.Register<LinkField>();
         App.Blocks.Register<LinkBlock>();
         App.Serializers.Register<LinkField>(new LinkFieldSerializer());
-        App.Modules.Manager().Scripts.Add("~/manager/Links/assets/js/link-field.js");
-        App.Modules.Manager().Styles.Add("~/manager/Links/assets/css/link-field.css");
+        App.Modules.Manager().Scripts.Add("~/manager/Navigation/assets/js/link-field.js");
+        App.Modules.Manager().Styles.Add("~/manager/Navigation/assets/css/link-field.css");
         return builder;
     }
 
@@ -90,7 +90,7 @@ public static class PiranhaLinksExtensions
                 return new PhysicalFileProvider(GetProjectPath("assets"));
             }
 
-            return new EmbeddedFileProvider(typeof(LinksModule).Assembly, "SoundInTheory.Piranha.assets");
+            return new EmbeddedFileProvider(typeof(LinksModule).Assembly, "SoundInTheory.Piranha.Navigation.assets");
         }
     }
 
