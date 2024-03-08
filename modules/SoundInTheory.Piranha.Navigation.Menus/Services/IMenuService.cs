@@ -58,7 +58,8 @@ namespace SoundInTheory.Piranha.Navigation.Services
         /// Saves a single menu item
         /// </summary>
         /// <param name="model">The item data</param>
-        /// <param name="after">The saved item can optionally be positioned after the item with this id</param>
+        /// <param name="menuId">The item's menu id</param>
+        /// <param name="position">Position data for where the item should be placed in the tree</param>
         Task SaveItem(MenuItem model, Guid menuId, TreeNodePosition position);
 
         /// <summary>

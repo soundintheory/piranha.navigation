@@ -43,7 +43,7 @@ namespace SoundInTheory.Piranha.Navigation
         /// </summary>
         public string Path { get; set; }
 
-        // <summary>
+        /// <summary>
         /// The readable text of the link
         /// </summary>
         public string Text { get; set; }
@@ -120,7 +120,7 @@ namespace SoundInTheory.Piranha.Navigation
         /// <summary>
         /// Implicit operator for converting a Piranha content object to a field
         /// </summary>
-        /// <param name="page">The content object</param>
+        /// <param name="content">The content object</param>
         public static implicit operator LinkField(RoutedContentBase content)
         {
             return new LinkField { Id = content.Id };

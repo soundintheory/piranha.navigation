@@ -17,10 +17,10 @@ namespace SoundInTheory.Piranha.Navigation
         /// <summary>
         /// Implicit operator for converting a string to a field.
         /// </summary>
-        /// <param name="str">The string value</param>
-        public static implicit operator MenuItemsField(List<MenuItem> objs)
+        /// <param name="items">The menu item list</param>
+        public static implicit operator MenuItemsField(List<MenuItem> items)
         {
-            return new MenuItemsField { Value = objs };
+            return new MenuItemsField { Value = items };
         }
 
         /// <summary>

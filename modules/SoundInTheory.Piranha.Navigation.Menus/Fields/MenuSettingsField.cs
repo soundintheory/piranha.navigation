@@ -13,12 +13,12 @@ namespace SoundInTheory.Piranha.Navigation
     public class MenuSettingsField : SimpleField<MenuSettings>
     {
         /// <summary>
-        /// Implicit operator for converting a string to a field.
+        /// Implicit operator for converting menu settings to a field.
         /// </summary>
-        /// <param name="str">The string value</param>
-        public static implicit operator MenuSettingsField(MenuSettings obj)
+        /// <param name="settings">The menu settings</param>
+        public static implicit operator MenuSettingsField(MenuSettings settings)
         {
-            return new MenuSettingsField { Value = obj };
+            return new MenuSettingsField { Value = settings };
         }
 
         /// <summary>

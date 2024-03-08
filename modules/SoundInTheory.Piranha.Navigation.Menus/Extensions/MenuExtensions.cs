@@ -125,7 +125,6 @@ public static class MenuExtensions
     /// <summary>
     /// Static accessor to navigation hooks
     /// </summary>
-    /// <param name="modules">The available modules</param>
     /// <returns>The Navigation module</returns>
     public static NavigationHooks Navigation(this HookManager hookManager)
     {

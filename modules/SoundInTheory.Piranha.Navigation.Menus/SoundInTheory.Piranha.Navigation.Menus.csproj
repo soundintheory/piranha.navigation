@@ -16,7 +16,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="assets/**" />
-    <None Include="README.md" Pack="true" PackagePath="\"/>
+    <None Include="README.md" Pack="true" PackagePath="" />
+    <None Include="soundintheory.png" Pack="true" Visible="false" PackagePath="" />
   </ItemGroup>
 
   <ItemGroup>

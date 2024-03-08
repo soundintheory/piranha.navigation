@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 namespace SoundInTheory.Piranha.Navigation.Serializers
 {
     /// <summary>
-    /// Serialises and deserialises the 'Value' property for instances of SimpleField<>
+    /// Serialises and deserialises the 'Value' property for instances of SimpleField
     /// </summary>
     /// <typeparam name="TField">The field type</typeparam>
     /// <typeparam name="TValue">The value type</typeparam>

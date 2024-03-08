@@ -119,9 +119,10 @@ namespace SoundInTheory.Piranha.Navigation.Controllers
         }
 
         /// <summary>
-        /// Deletes the page with the given id.
+        /// Deletes the menu item with the given id.
         /// </summary>
-        /// <param name="id">The unique id</param>
+        /// <param name="menuId">The menu id</param>
+        /// <param name="itemId">The item id</param>
         /// <returns>The result of the operation</returns>
         [Route("{menuId:Guid}/items/{itemId:Guid}")]
         [HttpDelete]

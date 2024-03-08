@@ -15,7 +15,7 @@ using SoundInTheory.Piranha.Navigation.Extensions;
 
 namespace SoundInTheory.Piranha.Navigation.Models
 {
-    public class Link : ILink
+    public class Link : ILink, IEquatable<Link>
     {
         public Link() { }
 
@@ -84,7 +84,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// <summary>
         /// Implicit operator for converting a Piranha manager page item to a link
         /// </summary>
-        /// <param name="page">The content object</param>
+        /// <param name="pageItem">The content object</param>
         public static implicit operator Link(PageItem pageItem)
         {
             if (pageItem == null)
@@ -104,7 +104,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// <summary>
         /// Implicit operator for converting a Piranha manager post item to a link
         /// </summary>
-        /// <param name="page">The content object</param>
+        /// <param name="postItem">The post object</param>
         public static implicit operator Link(PostModalItem postItem)
         {
             if (postItem == null)
@@ -127,7 +127,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// <summary>
         /// Implicit operator for converting a Piranha content object to a link
         /// </summary>
-        /// <param name="page">The content object</param>
+        /// <param name="content">The content object</param>
         public static implicit operator Link(RoutedContentBase content)
         {
             if (content == null)
@@ -214,8 +214,8 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// <summary>
         /// Checks if the fields are equal.
         /// </summary>
-        /// <param name="field1">The first field</param>
-        /// <param name="field2">The second field</param>
+        /// <param name="link1">The first field</param>
+        /// <param name="link2">The second field</param>
         /// <returns>True if the fields are equal</returns>
         public static bool operator ==(Link link1, Link link2)
         {
@@ -230,8 +230,8 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// <summary>
         /// Checks if the fields are not equal.
         /// </summary>
-        /// <param name="field1">The first field</param>
-        /// <param name="field2">The second field</param>
+        /// <param name="link1">The first field</param>
+        /// <param name="link2">The second field</param>
         /// <returns>True if the fields are equal</returns>
         public static bool operator !=(Link link1, Link link2)
         {

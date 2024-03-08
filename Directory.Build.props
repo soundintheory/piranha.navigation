@@ -3,6 +3,15 @@
     <Version>1.0.0</Version>
     <Authors>Sound in Theory</Authors>
     <Company>Sound in Theory</Company>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>soundintheory.png</PackageIcon>
+    <PackageProjectUrl>https://github.com/soundintheory/piranha.navigation</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/soundintheory/piranha.navigation</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 </Project>

@@ -104,7 +104,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// <summary>
         /// Implicit operator for converting a Piranha content object to a link tag
         /// </summary>
-        /// <param name="page">The content object</param>
+        /// <param name="content">The content object</param>
         public static implicit operator LinkTag(RoutedContentBase content)
         {
             return new LinkTag
@@ -175,8 +175,8 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// <summary>
         /// Checks if the fields are equal.
         /// </summary>
-        /// <param name="field1">The first field</param>
-        /// <param name="field2">The second field</param>
+        /// <param name="link1">The first field</param>
+        /// <param name="link2">The second field</param>
         /// <returns>True if the fields are equal</returns>
         public static bool operator ==(LinkTag link1, LinkTag link2)
         {
@@ -191,8 +191,8 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// <summary>
         /// Checks if the fields are not equal.
         /// </summary>
-        /// <param name="field1">The first field</param>
-        /// <param name="field2">The second field</param>
+        /// <param name="link1">The first field</param>
+        /// <param name="link2">The second field</param>
         /// <returns>True if the fields are equal</returns>
         public static bool operator !=(LinkTag link1, LinkTag link2)
         {
