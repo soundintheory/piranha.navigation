@@ -1,4 +1,6 @@
-﻿using Piranha.Manager.Services;
+﻿using Piranha;
+using Piranha.Manager.Services;
+using Piranha.Models;
 using SoundInTheory.Piranha.Navigation.Models;
 using System;
 using System.Collections.Generic;
@@ -9,18 +11,18 @@ namespace SoundInTheory.Piranha.Navigation.Services
 {
     public class PostLinkProvider : ILinkProvider
     {
-        private readonly PostService _postService;
+        private readonly IApi _api;
 
-        public PostLinkProvider(PostService postService)
+        public PostLinkProvider(IApi api)
         {
-            _postService = postService;
+            _api = api;
         }
 
         public virtual async Task<IEnumerable<Link>> GetAllAsync(Guid siteId)
         {
-            var archiveMap = await _postService.GetArchiveMap(siteId, null);
+            var posts = await _api.Posts.GetAllBySiteIdAsync<PostInfo>(siteId);
 
-            return archiveMap.Posts.Select(x => (Link)x);
+            return posts.Select(x => (Link)x).Where(x => x != null);
         }
     }
 }

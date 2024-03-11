@@ -139,10 +139,19 @@ namespace SoundInTheory.Piranha.Navigation.Models
             {
                 Id = content.Id,
                 Url = content.Permalink,
-                Text = content is PageBase page ? page.NavigationTitle : content.Title,
+                Text = GetContentTitle(content) ?? content.Slug,
                 Type = content is PostBase ? LinkType.Post : LinkType.Page,
                 TypeId = content.TypeId
             };
+        }
+
+        private static string GetContentTitle(RoutedContentBase content)
+        {
+            if (content is PageBase page)
+            {
+                return !string.IsNullOrWhiteSpace(page.NavigationTitle) ? page.NavigationTitle : page.Title;
+            }
+            return content.Title;
         }
 
         /// <summary>
