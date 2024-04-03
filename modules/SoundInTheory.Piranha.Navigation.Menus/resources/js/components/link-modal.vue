@@ -81,8 +81,14 @@
                                     </div>
                                     <div class="col-auto">
                                         <div class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input" id="link-nofollow-input" v-model="nofollow">
+                                            <input type="checkbox" class="custom-control-input" id="link-nofollow-input" v-model="nofollow" v-on:click="ensureOnlyOneSelected">
                                             <label class="custom-control-label" for="link-nofollow-input">No follow</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <div class="custom-control custom-checkbox">
+                                            <input type="checkbox" class="custom-control-input" id="link-noopener-input" v-model="noopener" v-on:click="ensureOnlyOneSelected">
+                                            <label class="custom-control-label" for="link-noopener-input">No opener</label>
                                         </div>
                                     </div>
                                 </div>
@@ -135,6 +141,14 @@
                 },
                 set: function(value) {
                     this.currentModel.attributes.rel = value ? 'nofollow' : null;
+                }
+            },
+            noopener: {
+                get: function () {
+                    return this.currentModel.attributes.rel === 'noopener';
+                },
+                set: function (value) {
+                    this.currentModel.attributes.rel = value ? 'noopener' : null;
                 }
             },
             itemType: {
@@ -295,6 +309,20 @@
                         class: null,
                         target: null,
                         rel: null
+                    }
+                }
+            },
+            ensureOnlyOneSelected: function(clickedCheckboxEvent) {
+                var checkbox = clickedCheckboxEvent.target;
+                if (checkbox.attr('checked'))
+                {
+                    if (checkbox.attr('id') === 'link-nofollow-input')
+                    {
+                        document.getElementById('link-noopener-input').attr('checked', false);
+                    }
+                    else if (checkbox.attr('id') === 'link-noopener-input')
+                    {
+                        document.getElementById('link-nofollow-input').attr('checked', false);
                     }
                 }
             }
