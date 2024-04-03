@@ -176,7 +176,7 @@
                     } else if (!this.currentModel.text) {
                         this.currentModel.useContentTitle = true;
                     }
-                } else 
+                } else {
                     this.currentModel.contentLink = null;
                     this.currentModel.url = oldUrl;
                     this.currentModel.path = null;
