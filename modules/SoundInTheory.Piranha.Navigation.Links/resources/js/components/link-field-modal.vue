@@ -66,6 +66,12 @@
                                         <label class="custom-control-label" for="link-nofollow-input">No follow</label>
                                     </div>
                                 </div>
+                                <div class="col-auto">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="link-noopener-input" v-model="noopener">
+                                        <label class="custom-control-label" for="link-noopener-input">No opener</label>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
@@ -131,6 +137,14 @@
                     this.currentModel.attributes.rel = value ? 'nofollow' : null;
                 }
             },
+            noopener: {
+                get: function () {
+                    return this.currentModel.attributes.rel === 'noopener';
+                },
+                set: function (value) {
+                    this.currentModel.attributes.rel = value ? 'noopener' : null;
+                }
+            },
             canUseContentTitle: function () {
                 return !this.currentModel.path && this.hasContentLink && this.currentModel.contentLink.text;
             },
@@ -176,7 +190,7 @@
                     } else if (!this.currentModel.text) {
                         this.currentModel.useContentTitle = true;
                     }
-                } else 
+                } else {
                     this.currentModel.contentLink = null;
                     this.currentModel.url = oldUrl;
                     this.currentModel.path = null;

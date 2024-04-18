@@ -39,6 +39,12 @@
                             </div>
                             <div class="col">
                                 <div class="form-group">
+                                    <label for="model.linkFieldSettings.noOpener">noopener?</label>
+                                    <input class="form-control mb-2" type="checkbox" v-model="model.linkFieldSettings.noOpener" />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
                                     <label for="model.linkFieldSettings.target">Target</label>
                                     <select class="form-control mb-2" v-model="model.linkFieldSettings.target">
                                         <option v-for="option in model.linkFieldSettings.targetOptions">{{option}}</option>

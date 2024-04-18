@@ -168,13 +168,15 @@ namespace SoundInTheory.Piranha.Navigation.Rendering
             var linkClass = context.Level > 1 ? context.Options.SubnavLinkClass : context.Options.LinkClass;
             var targetAttr = context.Item.Link.Attributes != null && context.Item.Link.Attributes.TryGetValue("target", out var target) && !string.IsNullOrEmpty(target?.ToString()) ? $"target=\"{target}\"" : "";
 
+            var relAttr = context.Item.Link.Attributes != null && context.Item.Link.Attributes.TryGetValue("rel", out var rel) && !string.IsNullOrEmpty(rel?.ToString()) ? $" rel=\"{rel}\"" : "";
+
             if (context.Item.Link.Type == LinkType.None)
             {
-                context.Output.AppendHtml($"<a class=\"{linkClass} level-{context.Level} {parentClass}\">{context.Item.Link.Text}</a>");
+                context.Output.AppendHtml($"<a class=\"{linkClass} level-{context.Level} {parentClass}\"{relAttr}>{context.Item.Link.Text}</a>");
             }
             else
             {
-                context.Output.AppendHtml($"<a href=\"{context.Item.Link.Url}\" class=\"{linkClass} level-{context.Level} {parentClass}\" {targetAttr}>{context.Item.Link.Text}</a>");
+                context.Output.AppendHtml($"<a href=\"{context.Item.Link.Url}\" class=\"{linkClass} level-{context.Level} {parentClass}\" {targetAttr}{relAttr}>{context.Item.Link.Text}</a>");
             }
         }
 
