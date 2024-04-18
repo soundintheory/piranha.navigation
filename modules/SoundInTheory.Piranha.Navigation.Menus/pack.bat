@@ -4,4 +4,4 @@ dotnet clean
 dotnet build -c Release
 
 :: Create NuGet package
-dotnet pack SoundInTheory.Piranha.Navigation.csproj --no-build -c Release -o ./.nuget
+dotnet pack SoundInTheory.Piranha.Navigation.Menus.csproj --no-build -c Release -o ./.nuget
