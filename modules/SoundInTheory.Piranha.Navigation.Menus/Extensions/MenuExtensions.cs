@@ -131,21 +131,6 @@ public static class MenuExtensions
         return MenuModule.Hooks;
     }
 
-    public static RoutedContentBase GetCurrentItem(this IApplicationService app)
-    {
-        if (app.CurrentPost != null)
-        {
-            return app.CurrentPost;
-        }
-
-        return app.CurrentPage;
-    }
-
-    public static Guid? GetCurrentItemId(this IApplicationService app)
-    {
-        return app.GetCurrentItem()?.Id;
-    }
-
     private static IFileProvider FileProvider
     {
         get

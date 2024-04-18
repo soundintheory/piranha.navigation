@@ -24,13 +24,13 @@ namespace SoundInTheory.Piranha.Navigation.Repositories
 
         public async Task<IEnumerable<Menu>> GetAll(Guid siteId)
         {
-            var menus = await _api.Content.GetAllAsync<NavigationMenu>();
+            var menus = await _api.Content.GetAllAsync<NavigationMenu>(NavigationMenu.ContentGroupId);
             return menus.Select(x => (Menu)x);
         }
 
         public async Task<IEnumerable<MenuInfo>> GetAllInfo(Guid siteId)
         {
-            var menus = await _api.Content.GetAllAsync<NavigationMenu>();
+            var menus = await _api.Content.GetAllAsync<NavigationMenu>(NavigationMenu.ContentGroupId);
             return menus.Select(x => (MenuInfo)x);
         }
 
@@ -42,13 +42,13 @@ namespace SoundInTheory.Piranha.Navigation.Repositories
 
         public async Task<Menu> GetBySlug(Guid siteId, string slug)
         {
-            var menus = await _api.Content.GetAllAsync<NavigationMenu>().ContinueWith(t => t.Result.ToList());
+            var menus = await _api.Content.GetAllAsync<NavigationMenu>(NavigationMenu.ContentGroupId).ContinueWith(t => t.Result.ToList());
             return (Menu)menus.Find(x => x.Slug == slug);
         }
 
         public async Task<MenuInfo> GetInfoBySlug(Guid siteId, string slug)
         {
-            var menus = await _api.Content.GetAllAsync<NavigationMenu>().ContinueWith(t => t.Result.ToList());
+            var menus = await _api.Content.GetAllAsync<NavigationMenu>(NavigationMenu.ContentGroupId).ContinueWith(t => t.Result.ToList());
             return (MenuInfo)menus.Find(x => x.Slug == slug);
         }
 

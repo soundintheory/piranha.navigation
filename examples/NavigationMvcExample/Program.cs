@@ -8,6 +8,7 @@ using NavigationMvcExample.Models;
 using SoundInTheory.Piranha.Navigation.Rendering;
 using SoundInTheory.Piranha.Navigation;
 using SoundInTheory.Piranha.Navigation.Enums;
+using SoundInTheory.Piranha.Navigation.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("piranha");
