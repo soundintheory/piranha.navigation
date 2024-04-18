@@ -17,9 +17,10 @@
             <div class="type d-none d-md-block">{{ typeName }}</div>
             <div class="actions">
                 <template v-if="piranha.navigation.permissions.menus.editItems">
-                    <a v-if="level < menu.settings.maxDepth" href="#" v-on:click.prevent="piranha.navigation.menuedit.addItem({ parentId: item.id })" title="Add Child Item..."><i class="fas fa-angle-down"></i></a>
+                    <a v-if="!(menu.settings.enabledOptions && menu.settings.enabledOptions.includes('HideAddChildItem')) && (level < menu.settings.maxDepth || !menu.settings.maxDepth)" href="#" v-on:click.prevent="piranha.navigation.menuedit.addItem({ parentId: item.id })" title="Add Child Item..."><i class="fas fa-angle-down"></i></a>
                     <a v-else class="disabled" href="#" style="visibility:hidden;"><i class="fas fa-angle-down"></i></a>
-                    <a href="#" v-on:click.prevent="piranha.navigation.menuedit.addItem({ afterId: item.id })" title="Add Item After..."><i class="fas fa-angle-right"></i></a>
+                    <a href="#" v-if="!(menu.settings.enabledOptions && menu.settings.enabledOptions.includes('HideAppendItem'))" v-on:click.prevent="piranha.navigation.menuedit.addItem({ afterId: item.id })" title="Add Item After..."><i class="fas fa-angle-right"></i></a>
+                    <a v-else class="disabled" href="#" style="visibility:hidden;"><i class="fas fa-angle-down"></i></a>
                 </template>
                 <a v-if="piranha.navigation.permissions.menus.deleteItems" v-on:click.prevent="piranha.navigation.menuedit.removeItem(item.id)" class="danger" href="#"><i class="fas fa-trash"></i></a>
             </div>

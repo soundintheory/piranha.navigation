@@ -414,3 +414,5 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+modules/SoundInTheory.Piranha.Navigation.Links/package-lock.json
+modules/SoundInTheory.Piranha.Navigation.Menus/package-lock.json

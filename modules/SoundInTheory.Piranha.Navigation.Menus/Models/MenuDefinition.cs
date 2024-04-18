@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SoundInTheory.Piranha.Navigation.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,5 +23,10 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// The maximum depth of items in the menu
         /// </summary>
         public int MaxDepth { get; set; }
+
+        /// <summary>
+        /// The available options for the menu editor
+        /// </summary>
+        public List<EditorMenuOption> EnabledOptions { get; set; }
     }
 }

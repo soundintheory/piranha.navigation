@@ -1,4 +1,5 @@
 ﻿using Piranha.Manager;
+using SoundInTheory.Piranha.Navigation.Enums;
 using SoundInTheory.Piranha.Navigation.Models;
 using System;
 using System.Collections.Concurrent;
@@ -15,9 +16,9 @@ namespace SoundInTheory.Piranha.Navigation.Runtime
 
         public MenuDefinition[] GetAll() => _menus.Values.ToArray();
 
-        public bool Register(string slug, string title, int maxDepth = 0)
+        public bool Register(string slug, string title, int maxDepth = 0, List<EditorMenuOption> editorMenuOptions = null)
         {
-            return Register(new MenuDefinition { Slug = slug, Title = title, MaxDepth = maxDepth });
+            return Register(new MenuDefinition { Slug = slug, Title = title, MaxDepth = maxDepth, EnabledOptions = editorMenuOptions });
         }
 
         public bool Register(MenuDefinition menu)

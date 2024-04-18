@@ -146,11 +146,17 @@ namespace SoundInTheory.Piranha.Navigation.Services
             var menu = await _repo.GetInfoBySlug(siteId, definition.Slug).ConfigureAwait(false)
                 ?? new MenuInfo { Slug = definition.Slug };
 
-            if (menu.Title != definition.Title || menu.Settings.MaxDepth != definition.MaxDepth || !menu.IsSystemDefined)
+            if (
+                menu.Title != definition.Title || 
+                menu.Settings.MaxDepth != definition.MaxDepth || 
+                menu.Settings.EnabledOptions != definition.EnabledOptions ||
+                !menu.IsSystemDefined
+            )
             {
                 menu.Title = definition.Title;
                 menu.IsSystemDefined = true;
                 menu.Settings.MaxDepth = definition.MaxDepth;
+                menu.Settings.EnabledOptions = definition.EnabledOptions;
                 await SaveInfo(menu);
             }
 

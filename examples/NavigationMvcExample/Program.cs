@@ -7,6 +7,7 @@ using Piranha.Manager.Editor;
 using NavigationMvcExample.Models;
 using SoundInTheory.Piranha.Navigation.Rendering;
 using SoundInTheory.Piranha.Navigation;
+using SoundInTheory.Piranha.Navigation.Enums;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("piranha");
@@ -69,7 +70,7 @@ app.UsePiranha(options =>
     App.Init(options.Api);
 
     // Add menus
-    App.Modules.Navigation().Menus.Register("primary", "Primary Nav", maxDepth: 2);
+    App.Modules.Navigation().Menus.Register("primary", "Primary Nav", maxDepth: 2, editorMenuOptions: new List<EditorMenuOption>() { EditorMenuOption.HideAddChildItem, EditorMenuOption.HideAppendItem});
     App.Modules.Navigation().Menus.Register("footer", "Footer Links", maxDepth: 1);
 
     // Test menu hooks
@@ -102,9 +103,6 @@ app.UsePiranha(options =>
     options.UseMenus();
     options.UseLinks();
 
-    // Add navigation
-    App.Modules.Navigation().Menus.Register("primary", "Primary Nav", maxDepth: 2);
-    App.Modules.Navigation().Menus.Register("footer", "Footer Links", maxDepth: 1);
 
     App.Blocks.Register<FavouriteWebsiteBlock>();
   

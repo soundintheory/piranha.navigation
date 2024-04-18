@@ -116,6 +116,7 @@ gulp.task("min:js", function (done) {
             .pipe(rename({
                 suffix: ".min"
             }))
+            .pipe(uglify())
             .pipe(gulp.dest("."));
     }
     done();
