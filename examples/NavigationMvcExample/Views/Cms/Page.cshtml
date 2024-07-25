@@ -22,12 +22,9 @@
     </div>
 </header>
 
-@if (Model.Content.LinkField != null && Model.Content.LinkField.HasValue)
-{
-    <div>
-        @Model.Content.LinkField.ToHtml()
-    </div>
-}
+<div>
+    <a id="my-link-field" class="link-field" link="Model.Content.LinkField" />
+</div>
 
 <main>
     @foreach (var block in Model.Blocks)

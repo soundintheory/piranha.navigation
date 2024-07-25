@@ -86,11 +86,28 @@ public static class LinkExtensions
             return;
         }
 
-        var tag = new TagBuilder("a");
-        tag.InnerHtml.AppendHtml(innerHtml ?? link.Text);
-        tag.Attributes["href"] = link.Url;
+        var tag = link.GetTagBuilder();
 
-        if (link.Attributes != null)
+        output.AppendHtml(tag);
+    }
+
+    public static TagBuilder GetTagBuilder(this ILink link) => link.GetTagBuilder(null, null);
+
+    public static TagBuilder GetTagBuilder(this ILink link, object attributes) => link.GetTagBuilder(null, attributes);
+
+    public static TagBuilder GetTagBuilder(this ILink link, string innerHtml) => link.GetTagBuilder(innerHtml, null);
+
+    public static TagBuilder GetTagBuilder(this ILink link, string innerHtml, object attributes)
+    {
+        var tag = new TagBuilder("a");
+        tag.InnerHtml.AppendHtml(innerHtml ?? link?.Text ?? "");
+
+        if (link != null && !link.IsNullOrEmpty())
+        {
+            tag.Attributes["href"] = link.Url;
+        }
+
+        if (link?.Attributes != null)
         {
             tag.MergeAttributes(link.Attributes, replaceExisting: true);
         }
@@ -99,8 +116,8 @@ public static class LinkExtensions
         {
             tag.MergeAttributes(HtmlHelper.AnonymousObjectToHtmlAttributes(attributes), replaceExisting: true);
         }
-        
-        output.AppendHtml(tag);
+
+        return tag;
     }
 
     #endregion
