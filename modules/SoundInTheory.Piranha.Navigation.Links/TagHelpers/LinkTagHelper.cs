@@ -15,7 +15,7 @@ namespace SoundInTheory.Piranha.Navigation.TagHelpers
     [HtmlTargetElement("a", Attributes = "link", TagStructure = TagStructure.NormalOrSelfClosing)]
     public class LinkTagHelper : TagHelper
     {
-        public LinkField Link { get; set; }
+        public ILink Link { get; set; }
 
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
