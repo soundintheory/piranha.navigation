@@ -20,6 +20,12 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// </summary>
         public LinkTag Link { get; set; }
 
+        ///<summary>
+        /// Gets/sets the JSON serialized renderable value
+        /// </summary>
+        public Renderable Renderable { get; set; }
+
+
         /// <summary>
         /// Gets/sets the created date.
         /// </summary>
