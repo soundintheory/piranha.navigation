@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Razor.TagHelpers;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Piranha;
 using Piranha.AspNetCore.Services;
 using SoundInTheory.Piranha.Navigation.Rendering;
@@ -17,16 +19,20 @@ namespace SoundInTheory.Piranha.Navigation.TagHelpers
     {
         private readonly IMenuService _menuService;
 
-        private readonly IMenuRenderer _menuRenderer;
-
         private readonly IApplicationService _app;
 
-        public MenuTagHelper(IMenuService menuService, IMenuRenderer menuRenderer, IApplicationService app)
+        private readonly IHtmlHelper _htmlHelper;
+
+        public MenuTagHelper(IMenuService menuService, IApplicationService app, IHtmlHelper htmlHelper)
         {
             _menuService = menuService;
-            _menuRenderer = menuRenderer;
             _app = app;
+            _htmlHelper = htmlHelper;
         }
+
+        [ViewContext]
+        [HtmlAttributeNotBound]
+        public ViewContext ViewContext { get; set; }
 
         public string Slug { get; set; }
 
@@ -52,6 +58,12 @@ namespace SoundInTheory.Piranha.Navigation.TagHelpers
 
         public string ParentActiveClass { get; set; }
 
+        public string View { get; set; }
+
+        public string ViewPrefix { get; set; }
+
+        public string TagName { get; set; }
+
         public override async Task ProcessAsync(TagHelperContext context, TagHelperOutput output)
         {
             var menu = await _menuService.GetBySlug(_app.Site.Id, Slug);
@@ -62,19 +74,26 @@ namespace SoundInTheory.Piranha.Navigation.TagHelpers
                 return;
             }
 
+
             // Let the menu renderer do the outer tag
             output.TagName = null;
 
             // Allow all attributes to pass through to the menu container except the custom ones
-            var excludeAttributes = new string[] { "slug", "list-class", "list-item-class", "link-class", "subnav-class", "subnav-list-class", "subnav-list-item-class", "subnav-link-class", "active-class", "parent-active-class" };
+            var excludeAttributes = new string[] { "slug", "list-class", "list-item-class", "link-class", "subnav-class", "subnav-list-class", "subnav-list-item-class", "subnav-link-class", "active-class", "parent-active-class", "view", "view-prefix", "tag" };
             var containerAttributes = context.AllAttributes
                 .Where(x => !excludeAttributes.Contains(x.Name))
                 .GroupBy(x => x.Name)
                 .ToDictionary(x => x.Key, x => x.First().Value);
 
-            _menuRenderer.RenderHtml(
+            (_htmlHelper as IViewContextAware)?.Contextualize(ViewContext);
+
+            var menuRenderer = new DefaultMenuRenderer(_app, _htmlHelper)
+            {
+                Output = output.Content
+            };
+
+            menuRenderer.Render(
                 menu,
-                output.Content,
                 o =>
                 {
                     o.ContainerAttributes = containerAttributes;
@@ -89,6 +108,9 @@ namespace SoundInTheory.Piranha.Navigation.TagHelpers
                     o.SubnavLinkClass = SubnavLinkClass;
                     o.ActiveClass = ActiveClass;
                     o.ParentActiveClass = ParentActiveClass;
+                    o.View = View;
+                    o.ViewPrefix = ViewPrefix;
+                    o.TagName = TagName;
                 });
         }
     }

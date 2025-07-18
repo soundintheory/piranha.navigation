@@ -17,6 +17,27 @@ namespace SoundInTheory.Piranha.Navigation
     [FieldType(Name = "LinkField", Shorthand = "LinkField", Component = "link-field")]
     public class LinkField : Field, ILink, IEquatable<LinkField>
     {
+        public LinkField() { }
+
+        public LinkField(ILink link)
+        {
+            if (link != null)
+            {
+                Type = link.Type;
+                Url = link.Url;
+                Text = link.Text;
+                Id = link.Id;
+                TypeId = link.TypeId;
+
+                if (link is LinkField linkField)
+                {
+                    Attributes = linkField.Attributes.ToDictionary(x => x.Key, x => x.Value);
+                    UseContentTitle = linkField.UseContentTitle;
+                    ContentLink = new Link(linkField.ContentLink);
+                }
+            }
+        }
+
         /// <summary>
         /// The page or post id
         /// </summary>
@@ -61,10 +82,10 @@ namespace SoundInTheory.Piranha.Navigation
         /// <summary>
         /// Information about the Piranha content being linked to, if the type of link is page or post
         /// </summary>
-        public Link ContentLink { get; internal set; }
+        public Link ContentLink { get; protected set; }
 
         [JsonIgnore]
-        public RoutedContentBase ContentInfo { get; internal set; }
+        public RoutedContentBase ContentInfo { get; protected set; }
 
         /// <summary>
         /// The type ID of the content link
@@ -78,6 +99,7 @@ namespace SoundInTheory.Piranha.Navigation
             }
         }
 
+        [JsonIgnore]
         public bool HasValue => !this.IsNullOrEmpty();
 
         /// <summary>

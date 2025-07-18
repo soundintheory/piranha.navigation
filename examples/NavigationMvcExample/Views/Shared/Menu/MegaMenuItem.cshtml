@@ -1,0 +1,17 @@
+﻿@model SoundInTheory.Piranha.Navigation.Rendering.MenuItemViewModel<NavigationMvcExample.Models.Menu.MegaMenuItem>
+@{
+    var childGroups = Model.Item.Groups;
+}
+
+<a class="@Model.Options.LinkClass">@Model.Item.Text</a>
+
+<div class="mega-menu">
+    <div class="row">
+        @foreach (var group in childGroups)
+        {
+            <div class="col-auto">
+                @Html.MenuSubnav(group)
+            </div>
+        }
+    </div>
+</div>

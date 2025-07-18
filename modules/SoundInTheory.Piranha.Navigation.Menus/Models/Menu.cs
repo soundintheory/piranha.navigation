@@ -1,4 +1,5 @@
-﻿using Piranha;
+﻿using Newtonsoft.Json;
+using Piranha;
 using SoundInTheory.Piranha.Navigation.Extensions;
 using System;
 using System.Collections.Generic;
@@ -11,6 +12,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// <summary>
         /// Gets/sets the available fields.
         /// </summary>
+        [JsonProperty(ItemTypeNameHandling = TypeNameHandling.None)]
         public List<MenuItem> Items { get; set; } = new List<MenuItem>();
 
         /// <summary>
@@ -23,10 +25,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
             {
                 await Items.ForEachRecursiveAsync(async i =>
                 {
-                    if (i.Link != null)
-                    {
-                        await i.Link.Init(api);
-                    }
+                    await i.Init(api);
                 });
             }
         }

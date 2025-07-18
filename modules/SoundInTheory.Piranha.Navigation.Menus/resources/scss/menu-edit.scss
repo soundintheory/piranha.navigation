@@ -54,7 +54,6 @@ html {
     }
 
     .actions {
-        width: 7rem;
         flex-shrink: 0;
         color: #adb5bd;
 
@@ -113,6 +112,24 @@ html {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+        }
+    }
+
+    .item-actions {
+        > * {
+            background-color: transparent;
+            border: none;
+            display: inline-block;
+            width: 1.5rem;
+            height: 1.5rem;
+            text-align: center;
+            line-height: 1.5rem;
+            border-radius: 50%;
+            transition: background-color ease-in-out .15s, color ease-in-out .15s;
+        }
+
+        .dropdown-header {
+            color: #adb5bd;
         }
     }
 }

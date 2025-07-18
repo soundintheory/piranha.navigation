@@ -10,6 +10,14 @@ namespace SoundInTheory.Piranha.Navigation.Extensions
     public static class TreeNodeExtensions
     {
         /// <summary>
+        /// Gets an item's children of a certain type
+        /// </summary>
+        public static IList<TChild> GetChildren<T, TChild>(this T item) where T : ITreeNode<T>
+        {
+            return item.Children.OfType<TChild>().ToList();
+        }
+
+        /// <summary>
         /// Gets the breadcrumbs for a given item in the tree
         /// </summary>
         public static IList<T> GetBreadcrumbs<T>(this T item, bool includeSelf = false) where T : ITreeNode<T>
@@ -113,6 +121,24 @@ namespace SoundInTheory.Piranha.Navigation.Extensions
                 if (item?.Children?.Count > 0)
                 {
                     item.Children.ForEachRecursive(action);
+                }
+            }
+        }
+
+        public static void ForEachRecursive<T>(this IList<T> list, Action<T,int> action) where T : ITreeNode<T>
+        {
+            ForEachRecursiveInternal(list, action, 1);
+        }
+
+        private static void ForEachRecursiveInternal<T>(IList<T> list, Action<T, int> action, int level) where T : ITreeNode<T>
+        {
+            foreach (var item in list)
+            {
+                action(item, level);
+
+                if (item?.Children?.Count > 0)
+                {
+                    ForEachRecursiveInternal(item.Children, action, level + 1);
                 }
             }
         }

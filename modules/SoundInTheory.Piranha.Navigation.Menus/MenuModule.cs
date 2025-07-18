@@ -3,8 +3,10 @@ using Piranha.Extend;
 using Piranha.Manager;
 using Piranha.Security;
 using SoundInTheory.Piranha.Navigation.Runtime;
+using SoundInTheory.Piranha.Navigation.Serializers;
 using System.Collections.Generic;
 using Piranha.Runtime;
+using Newtonsoft.Json;
 
 namespace SoundInTheory.Piranha.Navigation
 {
@@ -28,6 +30,11 @@ namespace SoundInTheory.Piranha.Navigation
         /// Register system defined menus here so that they get automatically created and can be edited in the manager (but not deleted)
         /// </summary>
         public IAppMenuList Menus { get; private set; } = new AppMenuList();
+
+        /// <summary>
+        /// Register custom menu item types here so that they can be used in menus
+        /// </summary>
+        public IAppMenuItemList MenuItems { get; private set; } = new AppMenuItemList();
 
         /// <summary>
         /// Gets the module author
@@ -73,6 +80,10 @@ namespace SoundInTheory.Piranha.Navigation
             {
                 App.Permissions["Navigation"].Add(permission);
             }
+
+            // Register built-in menu item types
+            MenuItems.Register<Models.LinkMenuItem>();
+            MenuItems.Register<Models.StaticMenuItem>();
 
             // Add manager menu items
             Menu.Items.Insert(1, new MenuItem

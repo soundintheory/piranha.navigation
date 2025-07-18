@@ -110,6 +110,7 @@ var js = [
         name: "link-modal.js",
         items: [
             "resources/js/components/link-modal.vue",
+            "resources/js/components/menu-link-field.vue",
             "resources/js/link-modal.js"
         ]
     },
@@ -117,6 +118,8 @@ var js = [
         name: "menu-edit.js",
         items: [
             "resources/js/components/navigation-menu-item.vue",
+            "resources/js/components/dynamic-item-label.vue",
+            "resources/js/components/add-item-link.vue",
             "resources/js/menu-edit.js"
         ]
     }

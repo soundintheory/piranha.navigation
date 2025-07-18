@@ -1,0 +1,37 @@
+# Piranha Navigation Project Rules
+
+## Project Structure
+- Main modules in `modules/` directory
+- Example project in `examples/NavigationMvcExample/`
+
+## Piranha CMS Integration Patterns
+- Use the `global::` prefix for any references to the main Piranha namespace to avoid conflicts with `SoundInTheory.Piranha`
+- Field types should inherit from Piranha base classes (IField, etc.)
+- Use `[Field(Title = "...")]` attributes for field metadata
+
+## Menu System Architecture
+- MenuItem base class with polymorphic inheritance (LinkMenuItem, StaticMenuItem, etc.)
+- MenuItemDefinition for type registration with reflection-based field discovery
+- JSON serialization uses "$type" discriminator for polymorphism
+- AppMenuItemList manages registered menu item types
+- MenuApiController provides `/manager/api/navigation/menus/types` endpoint
+
+## Vue Component Patterns
+- Components automatically registered from `resources/js/components/*.vue` using the filename as component name
+- Use dynamic components with `:is="componentName"` for field rendering
+- Emit 'update' events for two-way data binding
+
+## Field Component Integration
+- LinkTag field uses `link-tag` Vue component
+- All existing Piranha fields are supported, with information about each field type (including which vue component to use) coming from `global::Piranha.App.Fields`, unless overridden by the `[Field]` attribute
+- All Piranha field components are already registered and available in the DOM
+
+## API Endpoints
+- `/manager/api/navigation/menus/types` - Get available menu item types
+- `/manager/api/links/all` - Search for linkable content (pages/posts)
+
+## Development Notes
+- Always use Piranha's existing patterns rather than custom implementations
+- Maintain backwards compatibility with existing menu items
+- Use reflection for automatic field discovery
+- Keep Vue components focused on single responsibilities

@@ -10,5 +10,6 @@ namespace SoundInTheory.Piranha.Navigation.Models.Manager
     public class MenuEditModel : AsyncResult
     {
         public Menu Menu { get; set; }
+        public MenuItemTypeModel[] AvailableMenuItemTypes { get; set; }
     }
 }

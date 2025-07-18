@@ -12,6 +12,7 @@ using Piranha.Manager.Services;
 using SoundInTheory.Piranha.Navigation.Models;
 using SoundInTheory.Piranha.Navigation.Models.Manager;
 using SoundInTheory.Piranha.Navigation.Services;
+using SoundInTheory.Piranha.Navigation.Services.Manager;
 
 namespace SoundInTheory.Piranha.Navigation.Controllers
 {
@@ -28,12 +29,14 @@ namespace SoundInTheory.Piranha.Navigation.Controllers
         private readonly IMenuService _service;
         private readonly IApi _api;
         private readonly ManagerLocalizer _localizer;
+        private readonly MenuContentService _menuContent;
 
-        public MenuApiController(IMenuService service, IApi api, ManagerLocalizer localizer)
+        public MenuApiController(IMenuService service, IApi api, ManagerLocalizer localizer, MenuContentService menuContent)
         {
             _service = service;
             _api = api;
             _localizer = localizer;
+            _menuContent = menuContent;
         }
 
         /// <summary>
@@ -69,7 +72,8 @@ namespace SoundInTheory.Piranha.Navigation.Controllers
 
             return new MenuEditModel
             {
-                Menu = menu
+                Menu = menu,
+                AvailableMenuItemTypes = await _menuContent.GetAllItemTypes()
             };
         }
 

@@ -28,8 +28,8 @@ namespace SoundInTheory.Piranha.Navigation
 
         public NavigationMenuItemDelegate OnRenderMenuItem { get; set; }
 
-        public delegate void NavigationMenuDelegate(MenuRenderContext context);
+        public delegate void NavigationMenuDelegate(MenuViewModel context);
 
-        public delegate void NavigationMenuItemDelegate(MenuItemRenderContext context);
+        public delegate void NavigationMenuItemDelegate(MenuItemViewModel context);
     }
 }

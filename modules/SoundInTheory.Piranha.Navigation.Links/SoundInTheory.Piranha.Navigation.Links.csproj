@@ -1,16 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0;net8.0;net9.0</TargetFrameworks>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <RootNamespace>SoundInTheory.Piranha.Navigation</RootNamespace>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Piranha" Version="10.3.0" />
-    <PackageReference Include="Piranha.AspNetCore" Version="10.3.0" />
-    <PackageReference Include="Piranha.Manager" Version="10.3.0" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net7.0'">
+    <PackageReference Include="Piranha" Version="10.4.0" />
+    <PackageReference Include="Piranha.AspNetCore" Version="10.4.0" />
+    <PackageReference Include="Piranha.Manager" Version="10.4.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net9.0'">
+    <PackageReference Include="Piranha" Version="12.0.0" />
+    <PackageReference Include="Piranha.AspNetCore" Version="12.0.0" />
+    <PackageReference Include="Piranha.Manager" Version="12.0.0" />
   </ItemGroup>
 
   <ItemGroup>

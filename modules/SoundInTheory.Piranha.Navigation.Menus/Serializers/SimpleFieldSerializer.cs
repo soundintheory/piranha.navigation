@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using Piranha.Extend;
 using Piranha.Extend.Fields;
+using SoundInTheory.Piranha.Navigation.Fields;
 using SoundInTheory.Piranha.Navigation.Models;
 using System;
 using System.Collections.Generic;
@@ -23,6 +24,11 @@ namespace SoundInTheory.Piranha.Navigation.Serializers
         {
             if (obj is TField field)
             {
+                if (field is IHasSerializerSettings sField)
+                {
+                    return JsonConvert.SerializeObject(field.Value, sField.SerializerSettings);
+                }
+
                 return JsonConvert.SerializeObject(field.Value);
             }
             throw new ArgumentException("The given object doesn't match the serialization type");
@@ -33,8 +39,18 @@ namespace SoundInTheory.Piranha.Navigation.Serializers
         {
             try
             {
-                var value = JsonConvert.DeserializeObject<TValue>(str);
-                return new TField { Value = value };
+                var field = new TField();
+
+                if (field is IHasSerializerSettings sField)
+                {
+                    field.Value = JsonConvert.DeserializeObject<TValue>(str, sField.SerializerSettings);
+                }
+                else
+                {
+                    field.Value = JsonConvert.DeserializeObject<TValue>(str);
+                }
+
+                return field;
             }
             catch (Exception)
             {

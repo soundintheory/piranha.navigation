@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
+using SoundInTheory.Piranha.Navigation.Services.Manager;
 
 public static class MenuExtensions
 {
@@ -77,8 +78,8 @@ public static class MenuExtensions
     {
         // Register services
         services.TryAddScoped<IMenuService, MenuService>();
-        services.TryAddScoped<IMenuRenderer, MenuHtmlRenderer>();
         services.TryAddScoped<IMenuRepository, MenuRepository>();
+        services.TryAddScoped<MenuContentService>();
         services.AddLinkServices();
 
         // Add the Navigation module

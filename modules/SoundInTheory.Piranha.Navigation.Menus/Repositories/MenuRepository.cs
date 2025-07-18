@@ -102,16 +102,33 @@ namespace SoundInTheory.Piranha.Navigation.Repositories
             // Create new if it doesn't exist
             if (item == null)
             {
-                item = new MenuItem
-                {
-                    Id = Guid.NewGuid(),
-                    Created = DateTime.Now
-                };
+                // Create the appropriate concrete type based on the model type
+                item = CreateMenuItemInstance(model.GetType());
+                item.Id = Guid.NewGuid();
+                item.Created = DateTime.Now;
 
                 menuItems.InsertNode(item, position);
             }
+            else
+            {
+                // If the type has changed, we need to replace the item
+                if (item.GetType() != model.GetType())
+                {
+                    var newItem = CreateMenuItemInstance(model.GetType());
+                    newItem.Id = item.Id;
+                    newItem.Created = item.Created;
+                    newItem.Children = item.Children;
+                    newItem.Hidden = item.Hidden;
+                    
+                    // Replace in the tree manually
+                    ReplaceMenuItemInTree(menuItems, item, newItem);
+                    item = newItem;
+                }
+            }
 
-            item.Link = new LinkTag(model.Link);
+            // Copy properties from model to item
+            CopyMenuItemProperties(model, item);
+            
             item.LastModified = menu.LastModified = DateTime.Now;
             menu.Items = menuItems;
 
@@ -122,6 +139,72 @@ namespace SoundInTheory.Piranha.Navigation.Repositories
 
             // Save all changes
             await _api.Content.SaveAsync(menu);
+        }
+
+        /// <summary>
+        /// Creates a new instance of the specified menu item type.
+        /// </summary>
+        private MenuItem CreateMenuItemInstance(Type menuItemType)
+        {
+            if (menuItemType == typeof(Models.LinkMenuItem))
+            {
+                return new Models.LinkMenuItem();
+            }
+            else if (menuItemType == typeof(Models.StaticMenuItem))
+            {
+                return new Models.StaticMenuItem();
+            }
+            else
+            {
+                // Try to create using reflection for custom types
+                return (MenuItem)Activator.CreateInstance(menuItemType);
+            }
+        }
+
+        /// <summary>
+        /// Replaces an item in the menu tree with a new item.
+        /// </summary>
+        private void ReplaceMenuItemInTree(IList<MenuItem> items, MenuItem oldItem, MenuItem newItem)
+        {
+            for (int i = 0; i < items.Count; i++)
+            {
+                if (items[i].Id == oldItem.Id)
+                {
+                    items[i] = newItem;
+                    return;
+                }
+                
+                if (items[i].Children != null && items[i].Children.Count > 0)
+                {
+                    ReplaceMenuItemInTree(items[i].Children, oldItem, newItem);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Copies properties from source to target menu item.
+        /// </summary>
+        private void CopyMenuItemProperties(MenuItem source, MenuItem target)
+        {
+            target.Hidden = source.Hidden;
+            
+            // Copy type-specific properties using reflection
+            var sourceType = source.GetType();
+            var targetType = target.GetType();
+            
+            if (sourceType == targetType)
+            {
+                var properties = sourceType.GetProperties()
+                    .Where(p => p.CanRead && p.CanWrite && 
+                               p.DeclaringType != typeof(MenuItem) && 
+                               !p.GetCustomAttributes(typeof(JsonIgnoreAttribute), true).Any());
+
+                foreach (var prop in properties)
+                {
+                    var value = prop.GetValue(source);
+                    prop.SetValue(target, value);
+                }
+            }
         }
 
         public async Task SaveItemStructure(List<MenuItem> model, Guid menuId)

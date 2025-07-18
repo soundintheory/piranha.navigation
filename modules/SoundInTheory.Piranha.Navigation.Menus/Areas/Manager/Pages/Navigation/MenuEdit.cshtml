@@ -54,10 +54,10 @@
                             <span class="title">{{ menu.title }} <small style="display:none">(<code>{{ menu.slug }}</code>)</small></span>
                         </div>
                         <div>
-                            <button v-if="piranha.navigation.permissions.menus.editItems" id="pageGroup" type="button" v-on:click.prevent="piranha.navigation.menuedit.addItem(null)" class="btn btn-sm btn-primary btn-labeled">
+                            <add-item-link link-class="btn btn-sm btn-primary btn-labeled" v-if="piranha.navigation.permissions.menus.editItems" :available-types="availableTypes">
                                 <i class="fas fa-plus"></i>
                                 Add menu item
-                            </button>
+                            </add-item-link>
                         </div>
                     </div>
                     <div class="menu-container dd" :data-id="menu.id">

@@ -9,6 +9,8 @@ using SoundInTheory.Piranha.Navigation.Rendering;
 using SoundInTheory.Piranha.Navigation;
 using SoundInTheory.Piranha.Navigation.Enums;
 using SoundInTheory.Piranha.Navigation.Extensions;
+using SoundInTheory.Piranha.Navigation.Models;
+using NavigationMvcExample.Models.Menu;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("piranha");
@@ -71,20 +73,24 @@ app.UsePiranha(options =>
     App.Init(options.Api);
 
     // Add menus
-    App.Modules.Navigation().Menus.Register("primary", "Primary Nav", maxDepth: 2, editorMenuOptions: new List<EditorMenuOption>() { EditorMenuOption.HideAddChildItem, EditorMenuOption.HideAppendItem});
+    App.Modules.Navigation().Menus.Register("primary", "Primary Nav", maxDepth: 2);
     App.Modules.Navigation().Menus.Register("footer", "Footer Links", maxDepth: 1);
 
-    // Test menu hooks
-    MenuModule.Hooks.OnRenderMenuItem += (MenuItemRenderContext context) =>
-    {
-        var currentId = context.App?.GetCurrentItemId();
-        if (currentId.HasValue)
-        {
-            context.Item.Link.Url += "?fromId=" + currentId;
+    // Register custom menu item types
+    App.Modules.Navigation().MenuItems.Register<MegaMenuItem>();
+    App.Modules.Navigation().MenuItems.Register<MegaMenuGroup>();
 
-            if (!string.IsNullOrEmpty(context.Item.Link.ContentLink?.TypeId))
+    // Test menu hooks
+    MenuModule.Hooks.OnRenderMenuItem += (MenuItemViewModel model) =>
+    {
+        var currentId = model.App?.GetCurrentItemId();
+        if (currentId.HasValue && model.Item is LinkMenuItem linkMenuItem && linkMenuItem.Link != null)
+        {
+            linkMenuItem.Link.Url += "?fromId=" + currentId;
+
+            if (!string.IsNullOrEmpty(linkMenuItem.Link.ContentLink?.TypeId))
             {
-                context.Item.Link.Url += "&itemType=" + context.Item.Link.ContentLink.TypeId;
+                linkMenuItem.Link.Url += "&itemType=" + linkMenuItem.Link.ContentLink.TypeId;
             }
         }
     };

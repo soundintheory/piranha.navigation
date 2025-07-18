@@ -9,10 +9,16 @@ piranha.navigation.menuedit = new Vue({
     data: {
         loading: true,
         menu: null,
+        availableItemTypes: [],
         addSiteTitle: null,
         addToSiteId: null,
         addPageId: null,
         currentState: null
+    },
+    provide: function() {
+        return {
+            root: this
+        };
     },
     methods: {
         load: function (menuId) {
@@ -23,6 +29,10 @@ piranha.navigation.menuedit = new Vue({
                 .then((result) => {
                     if (result.menu) {
                         this.setMenu(result.menu);
+                    }
+                    if (result.availableMenuItemTypes) {
+                        this.availableItemTypes = result.availableMenuItemTypes;
+                        piranha.navigation.linkmodal.setAvailableItemTypes(result.availableMenuItemTypes);
                     }
                 })
                 .catch((error) => { console.log("error:", error); });
@@ -56,17 +66,40 @@ piranha.navigation.menuedit = new Vue({
         },
         bind: function () {
 
-            console.log('binding!');
-
             $(".menu-container").each((i, e) => {
                 $(e).nestable({
-                    maxDepth: this.menu.settings.maxDepth ? this.menu.settings.maxDepth : 100,
+                    //maxDepth: this.menu.settings.maxDepth ? this.menu.settings.maxDepth : 100,
                     group: i,
-                    onDragStart: (l, e) => {
+                    onDragStart: (l, el) => {
                         document.documentElement.classList.add('dd-dragging');
                         this.currentState = JSON.stringify($(l).nestable("serialize"));
+                        this.draggingItemType = this.availableItemTypes.find(x => x.id === $(el).data('item-type'));
                     },
-                    beforeDragStop: (l, e) => {
+                    beforeDragStop: (l, el, p) => {
+                        const $parent = this.getParentNode(p);
+                        const parentLevel = parseInt($parent.data('level'));
+
+                        if (this.draggingItemType && $parent && $parent.length > 0) {
+
+                            const parentItemType = this.availableItemTypes.find(x => x.id === $parent.data('item-type'));
+
+                            if (this.draggingItemType.maxLevel <= parentLevel) {
+                                return false;
+                            }
+
+                            if (this.draggingItemType.allowedParents && this.draggingItemType.allowedParents.length > 0 && !this.draggingItemType.allowedParents.includes(parentItemType.id)) {
+                                return false;
+                            }
+
+                            if (parentItemType.allowedChildren && parentItemType.allowedChildren.length > 0 && !parentItemType.allowedChildren.includes(this.draggingItemType.id)) {
+                                return false;
+                            }
+                        } else if (this.draggingItemType && (!$parent || $parent.length === 0)) {
+                            if (this.draggingItemType.allowedParents && this.draggingItemType.allowedParents.length > 0 && !this.draggingItemType.allowedParents.includes("root")) {
+                                return false;
+                            }
+                        }
+                        
                         document.documentElement.classList.remove('dd-dragging');
                     },
                     callback: (l, e) => {
@@ -100,7 +133,7 @@ piranha.navigation.menuedit = new Vue({
                 });
             });
         },
-        addItem: function (position) {
+        addItem: function (typeId, position) {
 
             piranha.navigation.linkmodal.open((model) => {
 
@@ -109,9 +142,7 @@ piranha.navigation.menuedit = new Vue({
                     headers: piranha.utils.antiForgeryHeaders(),
                     body: JSON.stringify({
                         position: position,
-                        item: {
-                            link: model
-                        }
+                        item: model
                     })
                 })
                 .then((response) => { return response.json(); })
@@ -128,26 +159,18 @@ piranha.navigation.menuedit = new Vue({
                     console.log("error:", error);
                 });
 
-            }, null);
+            }, { ['$typeId']: typeId });
         },
         editItem: function(item) {
 
             piranha.navigation.linkmodal.open((model) => {
 
-                item.link = model;
+                Object.assign(item, model);
 
                 fetch(this.baseApiUrl + "/items", {
                     method: "post",
                     headers: piranha.utils.antiForgeryHeaders(),
-                    body: JSON.stringify({
-                        item: {
-                            id: item.id,
-                            link: item.link,
-                            sortOrder: item.sortOrder,
-                            parentId: item.parentId,
-                            menuId: item.menuId
-                        }
-                    })
+                    body: JSON.stringify({ item })
                 })
                 .then((response) => response.json())
                 .then((result) => {
@@ -162,7 +185,7 @@ piranha.navigation.menuedit = new Vue({
                     console.log("error:", error);
                 });
 
-            }, item.link);
+            }, item);
 
         },
         setMenu: function (menu) {
@@ -178,6 +201,25 @@ piranha.navigation.menuedit = new Vue({
                     this.bind();
                     this.loading = false;
                 });
+            });
+        },
+        getParentNode: function (el) {
+            return $(el).parents('[data-item-type].dd-item').first();
+        }
+    },
+    computed: {
+        availableTypes: function () {
+            let typeIds = this.availableItemTypes.map(x => x.id);
+
+            return typeIds.filter(typeId => {
+                const allowedType = this.availableItemTypes.find(x => x.id === typeId);
+                if (!allowedType) {
+                    return false;
+                }
+                if (allowedType.allowedParents && allowedType.allowedParents.length > 0 && !allowedType.allowedParents.includes("root")) {
+                    return false;
+                }
+                return true;
             });
         }
     },
