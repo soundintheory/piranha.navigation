@@ -33,7 +33,7 @@ namespace SoundInTheory.Piranha.Navigation.Runtime
         /// <param name="name">The display name for this menu item type</param>
         /// <param name="configure">Optional configuration action</param>
         /// <returns>True if registration was successful</returns>
-        public bool Register<T>(Action<MenuItemDefinition> configure = null) where T : MenuItem
+        public void Register<T>(Action<MenuItemDefinition> configure = null) where T : MenuItem
         {
             var definition = new MenuItemDefinition
             {
@@ -96,7 +96,7 @@ namespace SoundInTheory.Piranha.Navigation.Runtime
 
             configure?.Invoke(definition);
 
-            return Register(definition);
+            Register(definition);
         }
 
         /// <summary>
@@ -104,9 +104,9 @@ namespace SoundInTheory.Piranha.Navigation.Runtime
         /// </summary>
         /// <param name="definition">The menu item definition</param>
         /// <returns>True if registration was successful</returns>
-        public bool Register(MenuItemDefinition definition)
+        public void Register(MenuItemDefinition definition)
         {
-            return _menuItems.TryAdd(definition.Id, definition);
+            _menuItems.AddOrUpdate(definition.Id, definition, (key, existing) => definition);
         }
 
         /// <summary>
@@ -153,6 +153,79 @@ namespace SoundInTheory.Piranha.Navigation.Runtime
                 }
             }
             return null;
+        }
+
+        /// <summary>
+        /// Removes a menu item definition by id
+        /// </summary>
+        /// <returns>The removed menu item definition or null if not found</returns>
+        public MenuItemDefinition RemoveById(string id)
+        {
+            if (string.IsNullOrEmpty(id))
+            {
+                return null;
+            }
+
+            if (_menuItems.TryRemove(id, out var removed))
+            {
+                return removed;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Removes a menu item definition by type
+        /// </summary>
+        /// <returns>The removed menu item definition or null if not found</returns>
+        public MenuItemDefinition Remove<T>() where T : MenuItem => RemoveByType(typeof(T));
+
+        /// <summary>
+        /// Removes a menu item definition by type
+        /// </summary>
+        /// <returns>The removed menu item definition or null if not found</returns>
+        public MenuItemDefinition RemoveByType(Type type)
+        {
+            var item = GetByType(type);
+
+            if (item != null && _menuItems.TryRemove(item.Id, out var removed))
+            {
+                return removed;
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// If a menu item definition with the supplied type exists, the definition will be passed into the callback allowing easy configuration
+        /// </summary>
+        public void Configure<T>(Action<MenuItemDefinition> configure = null) where T : MenuItem
+            => ConfigureByType(typeof(T), configure);
+
+        /// <summary>
+        /// If a menu item definition with the supplied type exists, the definition will be passed into the callback allowing easy configuration
+        /// </summary>
+        public void ConfigureByType(Type type, Action<MenuItemDefinition> configure = null)
+        {
+            var item = GetByType(type);
+
+            if (item != null)
+            {
+                configure?.Invoke(item);
+            }
+        }
+
+        /// <summary>
+        /// If a menu item definition with the supplied id exists, the definition will be passed into the callback allowing easy configuration
+        /// </summary>
+        public void ConfigureById(string id, Action<MenuItemDefinition> configure = null)
+        {
+            var item = GetById(id);
+
+            if (item != null)
+            {
+                configure?.Invoke(item);
+            }
         }
 
         /// <summary>

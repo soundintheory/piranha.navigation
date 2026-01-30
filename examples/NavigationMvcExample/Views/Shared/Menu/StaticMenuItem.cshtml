@@ -1,0 +1,8 @@
+﻿@model SoundInTheory.Piranha.Navigation.Rendering.MenuItemViewModel<SoundInTheory.Piranha.Navigation.Models.StaticMenuItem>
+
+<span class="my-custom-static-item">@Model.Item.Text?.Value</span>
+
+@if (Model.Recursive)
+{
+    @Html.MenuSubnav(Model.Item);
+}

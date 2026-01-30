@@ -21,14 +21,14 @@ namespace SoundInTheory.Piranha.Navigation.Runtime
         /// <param name="name">The display name for this menu item type</param>
         /// <param name="configure">Optional configuration action</param>
         /// <returns>True if registration was successful</returns>
-        bool Register<T>(Action<MenuItemDefinition> configure = null) where T : MenuItem;
+        void Register<T>(Action<MenuItemDefinition> configure = null) where T : MenuItem;
 
         /// <summary>
         /// Registers a menu item definition.
         /// </summary>
         /// <param name="definition">The menu item definition</param>
         /// <returns>True if registration was successful</returns>
-        bool Register(MenuItemDefinition definition);
+        void Register(MenuItemDefinition definition);
 
         /// <summary>
         /// Gets a menu item definition by type name.
@@ -54,5 +54,38 @@ namespace SoundInTheory.Piranha.Navigation.Runtime
         /// </summary>
         /// <returns>The menu item definition or null if not found</returns>
         public MenuItemDefinition GetByType(Type type);
+
+        /// <summary>
+        /// Removes a menu item definition by id
+        /// </summary>
+        /// <returns>The removed menu item definition or null if not found</returns>
+        MenuItemDefinition RemoveById(string id);
+
+        /// <summary>
+        /// Removes menu item definition by type
+        /// </summary>
+        /// <returns>The removed menu item definition or null if not found</returns>
+        MenuItemDefinition Remove<T>() where T : MenuItem;
+
+        /// <summary>
+        /// Removes a menu item definition by type
+        /// </summary>
+        /// <returns>The removed menu item definition or null if not found</returns>
+        MenuItemDefinition RemoveByType(Type type);
+
+        /// <summary>
+        /// If a menu item definition with the supplied type exists, the definition will be passed into the callback allowing easy configuration
+        /// </summary>
+        void Configure<T>(Action<MenuItemDefinition> configure = null) where T : MenuItem;
+
+        /// <summary>
+        /// If a menu item definition with the supplied type exists, the definition will be passed into the callback allowing easy configuration
+        /// </summary>
+        void ConfigureByType(Type type, Action<MenuItemDefinition> configure = null);
+
+        /// <summary>
+        /// If a menu item definition with the supplied id exists, the definition will be passed into the callback allowing easy configuration
+        /// </summary>
+        void ConfigureById(string id, Action<MenuItemDefinition> configure = null);
     }
 }

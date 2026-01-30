@@ -113,7 +113,7 @@
 
                 if (itemType) {
                     itemType.fields.forEach((field) => {
-                        const propName = this.toCamelCase(field.meta.name);
+                        const propName = this.toCamelCase(field.meta.id);
                         currentModel[propName] = JSON.parse(JSON.stringify(fromModel[propName] || field.model));
                         delete currentModel[propName]["$type"];
                     });
@@ -127,7 +127,7 @@
             },
             getFieldModel: function (field) {
                 // Return the field model for the component
-                const propName = this.toCamelCase(field.meta.name);
+                const propName = this.toCamelCase(field.meta.id);
                 if (!this.currentModel[propName]) {
                     return { };
                 }

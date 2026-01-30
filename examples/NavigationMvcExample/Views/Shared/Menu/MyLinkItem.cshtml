@@ -1,0 +1,8 @@
+﻿@model SoundInTheory.Piranha.Navigation.Rendering.MenuItemViewModel<NavigationMvcExample.Models.Menu.MyLinkItem>
+
+<a class="my-custom-link @(Model.Item.CustomClass?.Value ?? "")" link="@Model.Item.Link" />
+
+@if (Model.Recursive)
+{
+    @Html.MenuSubnav(Model.Item);
+}

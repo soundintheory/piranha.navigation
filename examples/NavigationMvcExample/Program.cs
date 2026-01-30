@@ -80,6 +80,15 @@ app.UsePiranha(options =>
     App.Modules.Navigation().MenuItems.Register<MegaMenuItem>();
     App.Modules.Navigation().MenuItems.Register<MegaMenuGroup>();
 
+    // Testing overriding the built in "Link" item with our own
+    App.Modules.Navigation().MenuItems.Register<MyLinkItem>();
+
+    // Testing configuring the built in "Static" menu item
+    App.Modules.Navigation().MenuItems.Configure<StaticMenuItem>(x =>
+    {
+        x.ViewPath = "Menu/StaticMenuItem";
+    });
+
     // Test menu hooks
     MenuModule.Hooks.OnRenderMenuItem += (MenuItemViewModel model) =>
     {
