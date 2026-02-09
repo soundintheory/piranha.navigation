@@ -10,6 +10,46 @@ namespace SoundInTheory.Piranha.Navigation.Extensions
     public static class TreeNodeExtensions
     {
         /// <summary>
+        /// For a list of nested tree nodes, will flatten the whole structure into a single list
+        /// </summary>
+        public static List<T> FlattenTree<T>(this IEnumerable<T> list) where T : ITreeNode<T>
+        {
+            var output = new List<T>();
+
+            if (list == null || list.Count() == 0)
+            {
+                return output;
+            }
+
+            var items = list.ToList();
+
+            foreach (var item in items)
+            {
+                output.AddRange(FlattenRecursiveTreeItem(item));
+            }
+
+            // Ensure no duplicates
+            return output.GroupBy(i => i.Id.ToString()).Select(g => g.First()).ToList();
+        }
+
+        private static List<T> FlattenRecursiveTreeItem<T>(T item) where T : ITreeNode<T>
+        {
+            var output = new List<T> { item };
+
+            if (item.Children != null && item.Children.Count > 0)
+            {
+                foreach (var childItem in item.Children)
+                {
+                    childItem.Parent = item;
+
+                    output.AddRange(FlattenRecursiveTreeItem(childItem));
+                }
+            }
+
+            return output;
+        }
+
+        /// <summary>
         /// Gets an item's children of a certain type
         /// </summary>
         public static IList<TChild> GetChildren<T, TChild>(this T item) where T : ITreeNode<T>
@@ -146,15 +186,20 @@ namespace SoundInTheory.Piranha.Navigation.Extensions
         /// <summary>
         /// Execute an action on each item in the tree recursively
         /// </summary>
-        public static async Task ForEachRecursiveAsync<T>(this IList<T> list, Func<T, Task> action) where T : ITreeNode<T>
+        public static async Task ForEachRecursiveAsync<T>(this IList<T> list, Func<T, int, Task> action) where T : ITreeNode<T>
+        {
+            await ForEachRecursiveAsyncInternal(list, action, 1);
+        }
+
+        private static async Task ForEachRecursiveAsyncInternal<T>(this IList<T> list, Func<T, int, Task> action, int level) where T : ITreeNode<T>
         {
             foreach (var item in list)
             {
-                await action(item);
+                await action(item, level);
 
                 if (item?.Children?.Count > 0)
                 {
-                    await item.Children.ForEachRecursiveAsync(action);
+                    await item.Children.ForEachRecursiveAsyncInternal(action, level + 1);
                 }
             }
         }

@@ -68,7 +68,7 @@ namespace SoundInTheory.Piranha.Navigation.Controllers
         [Authorize(Policy = Permissions.Menus)]
         public async Task<MenuEditModel> Get(Guid menuId)
         {
-            var menu = await _service.GetById(menuId);
+            var menu = await _service.GetById(menuId, managerInit: true);
 
             return new MenuEditModel
             {
@@ -87,7 +87,7 @@ namespace SoundInTheory.Piranha.Navigation.Controllers
         {
             await _service.SaveItem(model.Item, menuId, model.Position ?? default);
             
-            var menu = await _service.GetById(menuId);
+            var menu = await _service.GetById(menuId, managerInit: true);
 
             return new MenuEditModel
             {

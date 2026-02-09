@@ -1,5 +1,7 @@
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Piranha;
+using Piranha.AspNetCore.Services;
 using Piranha.Extend;
 using SoundInTheory.Piranha.Navigation.Attributes;
 using SoundInTheory.Piranha.Navigation.Extensions;
@@ -23,8 +25,10 @@ namespace SoundInTheory.Piranha.Navigation.Models
         [Field]
         public MenuLinkField Link { get; set; }
 
-        public override Task Init(IApi api)
+        public override Task Init(IServiceProvider serviceProvider)
         {
+            var api = serviceProvider.GetRequiredService<IApplicationService>().Api;
+
             if (Link != null)
             {
                 return Link.Init(api);

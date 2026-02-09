@@ -22,12 +22,12 @@ namespace SoundInTheory.Piranha.Navigation.Services
         /// <summary>
         /// Get a full menu (including items) by id
         /// </summary>
-        Task<Menu> GetById(Guid id);
+        Task<Menu> GetById(Guid id, bool managerInit = false);
 
         /// <summary>
         /// Get a full menu (including items) by slug
         /// </summary>
-        Task<Menu> GetBySlug(Guid siteId, string slug);
+        Task<Menu> GetBySlug(Guid siteId, string slug, bool managerInit = false);
 
         /// <summary>
         /// Sync the database with the list of menu definitions added to the navigation module

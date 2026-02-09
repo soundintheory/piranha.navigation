@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Piranha;
 using Piranha.Extend;
 using Piranha.Extend.Fields;
@@ -11,9 +12,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using X.Web.Sitemap;
+using static System.Formats.Asn1.AsnWriter;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace SoundInTheory.Piranha.Navigation
@@ -48,9 +51,14 @@ namespace SoundInTheory.Piranha.Navigation
             return field?.Value ?? new List<MenuItem>();
         }
 
-        public virtual async Task Init(IApi api)
+        public virtual async Task Init(IServiceProvider services)
         {
-            Value?.ForEachRecursive((item, level) => item.Level = level);
+            await Value.InitFields(services);
+        }
+
+        public virtual async Task ManagerInit(IServiceProvider services)
+        {
+            await Value.InitFields(services, managerInit: true);
         }
     }
 }

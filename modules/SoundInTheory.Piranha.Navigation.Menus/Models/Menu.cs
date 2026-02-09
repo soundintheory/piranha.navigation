@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Piranha;
 using SoundInTheory.Piranha.Navigation.Extensions;
 using System;
@@ -18,14 +19,16 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// <summary>
         /// Called after the model has been loaded from the database
         /// </summary>
-        public virtual async Task Init(IApi api)
+        public virtual async Task Init(IServiceProvider serviceProvider)
         {
+            using var scope = serviceProvider.CreateScope();
+
             // Initialise all the items
             if (Items != null)
             {
-                await Items.ForEachRecursiveAsync(async i =>
+                await Items.ForEachRecursiveAsync(async (i, lvl) =>
                 {
-                    await i.Init(api);
+                    await i.Init(scope.ServiceProvider);
                 });
             }
         }

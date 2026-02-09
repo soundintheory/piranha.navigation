@@ -1,4 +1,5 @@
 ﻿using Piranha;
+using SoundInTheory.Piranha.Navigation.Extensions;
 using SoundInTheory.Piranha.Navigation.Models;
 using SoundInTheory.Piranha.Navigation.Repositories;
 using SoundInTheory.Piranha.Navigation.Runtime;
@@ -16,10 +17,13 @@ namespace SoundInTheory.Piranha.Navigation.Services
 
         private readonly IApi _api;
 
-        public MenuService(IMenuRepository repo, IApi api)
+        private readonly IServiceProvider _serviceProvider;
+
+        public MenuService(IMenuRepository repo, IApi api, IServiceProvider serviceProvider)
         {
             _repo = repo;
             _api = api;
+            _serviceProvider = serviceProvider;
         }
 
         public async Task<IEnumerable<Menu>> GetAll(Guid siteId)
@@ -32,18 +36,18 @@ namespace SoundInTheory.Piranha.Navigation.Services
             return await _repo.GetAllInfo(siteId).ConfigureAwait(false);
         }
 
-        public async Task<Menu> GetById(Guid id)
+        public async Task<Menu> GetById(Guid id, bool managerInit = false)
         {
             var menu = await _repo.GetById(id).ConfigureAwait(false);
-            await OnLoad(menu).ConfigureAwait(false);
+            await OnLoad(menu, managerInit).ConfigureAwait(false);
 
             return menu;
         }
 
-        public async Task<Menu> GetBySlug(Guid siteId, string slug)
+        public async Task<Menu> GetBySlug(Guid siteId, string slug, bool managerInit = false)
         {
             var menu = await _repo.GetBySlug(siteId, slug).ConfigureAwait(false);
-            await OnLoad(menu).ConfigureAwait(false);
+            await OnLoad(menu, managerInit).ConfigureAwait(false);
 
             return menu;
         }
@@ -163,11 +167,16 @@ namespace SoundInTheory.Piranha.Navigation.Services
             return menu;
         }
 
-        private async Task OnLoad(Menu menu)
+        private async Task OnLoad(Menu menu, bool managerInit = false)
         {
             if (menu == null) return;
 
-            await menu.Init(_api).ConfigureAwait(false);
+            if (managerInit)
+            {
+                await menu.Items.InitFields(_serviceProvider, managerInit: true);
+            }
+
+            await menu.Init(_serviceProvider).ConfigureAwait(false);
 
             App.Hooks.OnLoad(menu);
         }

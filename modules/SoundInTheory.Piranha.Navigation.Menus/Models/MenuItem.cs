@@ -71,7 +71,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// <summary>
         /// Called when the item is loaded
         /// </summary>
-        public virtual async Task Init(IApi api)
+        public virtual async Task Init(IServiceProvider serviceProvider)
         {
         }
 

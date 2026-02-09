@@ -28,6 +28,11 @@ namespace SoundInTheory.Piranha.Navigation.Extensions
                 var method = typeof(AppFieldList).GetMethod("RegisterSelect");
                 generic = method.MakeGenericMethod(fieldType.GenericTypeArguments.First());
             }
+            else if (typeof(DataSelectFieldBase).IsAssignableFrom(fieldType))
+            {
+                var method = typeof(AppFieldList).GetMethod("RegisterDataSelect");
+                generic = method.MakeGenericMethod(fieldType.GenericTypeArguments.First());
+            }
             else
             {
                 var method = typeof(AppFieldList).GetMethod("Register");

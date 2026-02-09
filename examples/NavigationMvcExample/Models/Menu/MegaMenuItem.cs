@@ -1,3 +1,5 @@
+using NavigationMvcExample.Models.SelectItems;
+using Piranha.Extend;
 using Piranha.Extend.Fields;
 using SoundInTheory.Piranha.Navigation.Attributes;
 using SoundInTheory.Piranha.Navigation.Models;
@@ -12,5 +14,8 @@ namespace NavigationMvcExample.Models.Menu
     public class MegaMenuItem : StaticMenuItem
     {
         public List<MegaMenuGroup> Groups => Children.OfType<MegaMenuGroup>().Where(x => x.Children.Any()).ToList();
+
+        [Field(Title = "Example Select Field")]
+        public DataSelectField<ExampleSelectItem> SelectField { get; set; }
     }
 }
