@@ -83,19 +83,25 @@ piranha.navigation.menuedit = new Vue({
 
                             const parentItemType = this.availableItemTypes.find(x => x.id === $parent.data('item-type'));
 
-                            if (this.draggingItemType.maxLevel <= parentLevel) {
+                            if (this.draggingItemType.maxLevel > 0 && this.draggingItemType.maxLevel <= parentLevel) {
+                                console.log(`draggingItemType.maxLevel (${this.draggingItemType.maxLevel}) <= parentLevel (${parentLevel})`);
                                 return false;
                             }
 
                             if (this.draggingItemType.allowedParents && this.draggingItemType.allowedParents.length > 0 && !this.draggingItemType.allowedParents.includes(parentItemType.id)) {
+                                let allowed = this.draggingItemType.allowedParents.join(',');
+                                console.log(`Allowed parents (${allowed}) does not include ${parentItemType.id}`);
                                 return false;
                             }
 
                             if (parentItemType.allowedChildren && parentItemType.allowedChildren.length > 0 && !parentItemType.allowedChildren.includes(this.draggingItemType.id)) {
+                                let allowed = parentItemType.allowedChildren;
+                                console.log(`Allowed children (${allowed}) does not include ${this.draggingItemType.id}`);
                                 return false;
                             }
                         } else if (this.draggingItemType && (!$parent || $parent.length === 0)) {
                             if (this.draggingItemType.allowedParents && this.draggingItemType.allowedParents.length > 0 && !this.draggingItemType.allowedParents.includes("root")) {
+                                console.log(`root parent not allowed`);
                                 return false;
                             }
                         }

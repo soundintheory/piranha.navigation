@@ -137,11 +137,11 @@ namespace SoundInTheory.Piranha.Navigation.Services
 
             if (item != null)
             {
-                App.Hooks.OnBeforeSave(item);
+                App.Hooks.OnBeforeDelete(item);
 
                 await _repo.DeleteItem(menuId, itemId).ConfigureAwait(false);
 
-                App.Hooks.OnAfterSave(item);
+                App.Hooks.OnAfterDelete(item);
             }
         }
 
