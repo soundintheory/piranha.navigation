@@ -5,7 +5,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
 {
     public interface ILink
     {
-        LinkType Type { get; set; }
+        string Type { get; set; }
 
         string Url { get; set; }
 
@@ -13,7 +13,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
 
         string Text { get; set; }
 
-        Guid? Id { get; set; }
+        string Id { get; set; }
 
         public Dictionary<string, object> Attributes { get; set; }
 

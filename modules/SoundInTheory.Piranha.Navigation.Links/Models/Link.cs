@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
 using Piranha.Models;
 using Piranha;
 using System;
@@ -31,8 +30,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
             }
         }
 
-        [JsonConverter(typeof(StringEnumConverter))]
-        public LinkType Type { get; set; }
+        public string Type { get; set; }
 
         public string Url { get; set; }
 
@@ -40,7 +38,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
 
         public string Text { get; set; }
 
-        public Guid? Id { get; set; }
+        public string Id { get; set; }
         
         public Dictionary<string, object> Attributes { get; set; }
 
@@ -94,7 +92,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
 
             return new Link
             {
-                Id = pageItem.Id,
+                Id = pageItem.Id.ToString(),
                 Url = pageItem.Permalink,
                 Text = pageItem.Title,
                 Type = LinkType.Page
@@ -114,7 +112,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
 
             return new Link
             {
-                Id = postItem.Id,
+                Id = postItem.Id.ToString(),
                 Url = postItem.Permalink,
                 Text = postItem.Title,
                 Type = LinkType.Post
@@ -137,7 +135,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
 
             return new Link
             {
-                Id = content.Id,
+                Id = content.Id.ToString(),
                 Url = content.Permalink,
                 Text = GetContentTitle(content) ?? content.Slug,
                 Type = content is PostBase ? LinkType.Post : LinkType.Page,
@@ -174,14 +172,10 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// </summary>
         public override int GetHashCode()
         {
-            switch (Type)
-            {
-                case LinkType.Page:
-                case LinkType.Post:
-                    return HashCode.Combine(Type, Id, Path);
-            }
+            if (Id != null)
+                return HashCode.Combine(Id, Type, Path, Text);
 
-            return HashCode.Combine(Url, Path);
+            return HashCode.Combine(Type, Url, Path, Text);
         }
 
         /// <summary>
@@ -210,14 +204,13 @@ namespace SoundInTheory.Piranha.Navigation.Models
                 return false;
             }
 
-            switch (Type)
-            {
-                case LinkType.Page:
-                case LinkType.Post:
-                    return Id == obj.Id && Path == obj.Path;
-            }
+            if (Type == LinkType.None)
+                return Text == obj.Text;
 
-            return Url == obj.Url && Path == obj.Path;
+            if (Type == LinkType.Custom)
+                return Url == obj.Url && Path == obj.Path && Text == obj.Text;
+
+            return Id == obj.Id && Path == obj.Path && Text == obj.Text;
         }
 
         /// <summary>

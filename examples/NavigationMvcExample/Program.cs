@@ -11,6 +11,7 @@ using SoundInTheory.Piranha.Navigation.Enums;
 using SoundInTheory.Piranha.Navigation.Extensions;
 using SoundInTheory.Piranha.Navigation.Models;
 using NavigationMvcExample.Models.Menu;
+using NavigationMvcExample.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("piranha");
@@ -40,6 +41,8 @@ builder.AddPiranha(options =>
 
     // TODO: Test sublink functionality
     //options.AddLinkProvider<SubPageLinkProvider>();
+
+    options.AddLinkProvider<CustomLinkProvider>();
 
     /*
      * Here you can configure the different permissions

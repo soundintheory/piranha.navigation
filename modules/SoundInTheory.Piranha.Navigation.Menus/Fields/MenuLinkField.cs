@@ -30,7 +30,7 @@ namespace SoundInTheory.Piranha.Navigation.Fields
         {
             return new MenuLinkField
             {
-                Id = content.Id,
+                Id = content.Id.ToString(),
                 Url = content.Permalink,
                 Text = content.Title,
                 Type = content is PostBase ? LinkType.Post : LinkType.Page,

@@ -1,7 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
-using Piranha;
-using Piranha.AspNetCore.Services;
 using Piranha.Extend;
 using SoundInTheory.Piranha.Navigation.Attributes;
 using SoundInTheory.Piranha.Navigation.Extensions;
@@ -25,16 +23,12 @@ namespace SoundInTheory.Piranha.Navigation.Models
         [Field]
         public MenuLinkField Link { get; set; }
 
-        public override Task Init(IServiceProvider serviceProvider)
+        public override async Task Init(IServiceProvider serviceProvider)
         {
-            var api = serviceProvider.GetRequiredService<IApplicationService>().Api;
-
             if (Link != null)
             {
-                return Link.Init(api);
+                await Link.Init(serviceProvider);
             }
-
-            return Task.CompletedTask;
         }
 
         /// <summary>
@@ -70,8 +64,8 @@ namespace SoundInTheory.Piranha.Navigation.Models
 
         public override bool IsActive(MenuItemViewModel viewModel)
         {
-            return 
-                (Link?.Id != null && Link.Id == viewModel.App.GetCurrentItemId()) || 
+            return
+                (Link?.Id != null && Guid.TryParse(Link.Id, out var linkGuid) && linkGuid == viewModel.App.GetCurrentItemId()) ||
                 (Link?.Url != null && Link.Url == viewModel.App.Request?.Url);
         }
 

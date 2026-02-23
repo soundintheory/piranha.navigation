@@ -47,9 +47,9 @@ namespace SoundInTheory.Piranha.Navigation.Serializers
             }
             catch (JsonReaderException)
             {
-                if (Guid.TryParse(str, out var id))
+                if (Guid.TryParse(str, out _))
                 {
-                    return new LinkField { Id = id, Type = LinkType.Page, UseContentTitle = true };
+                    return new LinkField { Id = str.Trim(), Type = LinkType.Page, UseContentTitle = true };
                 }
 
                 if (!string.IsNullOrWhiteSpace(str))

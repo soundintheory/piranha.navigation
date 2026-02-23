@@ -1,10 +1,10 @@
-﻿namespace SoundInTheory.Piranha.Navigation.Models
+namespace SoundInTheory.Piranha.Navigation.Models
 {
-    public enum LinkType
+    public static class LinkType
     {
-        None,
-        Page,
-        Post,
-        Custom
+        public const string None   = "None";
+        public const string Page   = "Page";
+        public const string Post   = "Post";
+        public const string Custom = "Custom";
     }
 }

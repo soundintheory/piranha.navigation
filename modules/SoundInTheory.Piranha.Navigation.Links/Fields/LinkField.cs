@@ -1,15 +1,13 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Piranha;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 using Piranha.Extend;
-using Piranha.Extend.Fields;
 using Piranha.Models;
 using SoundInTheory.Piranha.Navigation.Extensions;
 using SoundInTheory.Piranha.Navigation.Models;
+using SoundInTheory.Piranha.Navigation.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SoundInTheory.Piranha.Navigation
@@ -41,18 +39,12 @@ namespace SoundInTheory.Piranha.Navigation
         /// <summary>
         /// The page or post id
         /// </summary>
-        public Guid? Id { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
-        /// The parent item id
+        /// The type of link - can be page, post, custom, or a custom provider's type string
         /// </summary>
-        public Guid? ParentId { get; set; }
-
-        /// <summary>
-        /// The type of link - can be page, post, or custom
-        /// </summary>
-        [JsonConverter(typeof(StringEnumConverter))]
-        public LinkType Type { get; set; } = LinkType.Custom;
+        public string Type { get; set; } = LinkType.Custom;
 
         /// <summary>
         /// The url of the link
@@ -75,12 +67,12 @@ namespace SoundInTheory.Piranha.Navigation
         public Dictionary<string, object> Attributes { get; set; }
 
         /// <summary>
-        /// Whether the text should be the title of the content being linked to (only for page / post links)
+        /// Whether the text should be the title of the content being linked to (if the link has come from a provider)
         /// </summary>
         public bool UseContentTitle { get; set; }
 
         /// <summary>
-        /// Information about the Piranha content being linked to, if the type of link is page or post
+        /// Information about the content being linked to, if the link has come from a provider (eg. page or post)
         /// </summary>
         public Link ContentLink { get; protected set; }
 
@@ -108,26 +100,33 @@ namespace SoundInTheory.Piranha.Navigation
         /// </summary>
         public override string GetTitle() => Text;
 
-        public virtual async Task Init(IApi api)
+        public virtual async Task Init(IServiceProvider services)
         {
-            ContentInfo = await GetContentInfo(api);
-            ContentLink = (Link)ContentInfo;
-            
-            if (ContentLink != null)
-            {
-                if (!string.IsNullOrWhiteSpace(Path))
-                {
-                    ContentLink = ContentLink.SubLink(Path);
-                }
+            if (string.IsNullOrEmpty(Id) || Type == LinkType.None || Type == LinkType.Custom)
+                return;
 
-                Type = ContentLink.Type;
-                Url = ContentLink.Url.AppendUrlPath(Path);
+            var linkService = services.GetRequiredService<LinkService>();
+            var result = await linkService.GetByIdAsync(Id, Type).ConfigureAwait(false);
 
-                if (UseContentTitle || Text == null)
-                {
-                    Text = ContentLink.Text;
-                }
-            }
+            if (result != null)
+                ApplyResolution(result.Link, result.Content as RoutedContentBase);
+        }
+
+        private void ApplyResolution(Link contentLink, RoutedContentBase contentInfo)
+        {
+            ContentInfo = contentInfo;
+            ContentLink = contentLink;
+
+            if (ContentLink == null) return;
+
+            if (!string.IsNullOrWhiteSpace(Path))
+                ContentLink = ContentLink.SubLink(Path);
+
+            Type = ContentLink.Type;
+            Url = ContentLink.Url.AppendUrlPath(Path);
+
+            if (UseContentTitle || Text == null)
+                Text = ContentLink.Text;
         }
 
         /// <summary>
@@ -136,7 +135,7 @@ namespace SoundInTheory.Piranha.Navigation
         /// <param name="guid">The guid value</param>
         public static implicit operator LinkField(Guid guid)
         {
-            return new LinkField { Id = guid, Type = LinkType.Page };
+            return new LinkField { Id = guid.ToString(), Type = LinkType.Page, UseContentTitle = true };
         }
 
         /// <summary>
@@ -145,7 +144,7 @@ namespace SoundInTheory.Piranha.Navigation
         /// <param name="content">The content object</param>
         public static implicit operator LinkField(RoutedContentBase content)
         {
-            return new LinkField { Id = content.Id };
+            return new LinkField { Id = content.Id.ToString(), Type = (content is PostBase) ? LinkType.Post : LinkType.Page, UseContentTitle = true };
         }
 
         /// <summary>
@@ -153,14 +152,10 @@ namespace SoundInTheory.Piranha.Navigation
         /// </summary>
         public override int GetHashCode()
         {
-            switch (Type)
-            {
-                case LinkType.Page:
-                case LinkType.Post:
-                    return Id.HasValue ? Id.GetHashCode() : 0;
-            }
+            if (Id != null)
+                return HashCode.Combine(Id, Type, Path, UseContentTitle, UseContentTitle ? "" : Text);
 
-            return !string.IsNullOrWhiteSpace(Url) ? Url.GetHashCode() : 0;
+            return HashCode.Combine(Type, Url, Path, Text);
         }
 
         /// <summary>
@@ -189,14 +184,13 @@ namespace SoundInTheory.Piranha.Navigation
                 return false;
             }
 
-            switch (Type)
-            {
-                case LinkType.Page:
-                case LinkType.Post:
-                    return Id == obj.Id;
-            }
+            if (Type == LinkType.None)
+                return Text == obj.Text;
 
-            return Url == obj.Url;
+            if (Type == LinkType.Custom)
+                return Url == obj.Url && Path == obj.Path && Text == obj.Text;
+
+            return Id == obj.Id && Path == obj.Path && ((UseContentTitle && obj.UseContentTitle) || (!UseContentTitle && !obj.UseContentTitle && Text == obj.Text));
         }
 
         /// <summary>
@@ -224,41 +218,6 @@ namespace SoundInTheory.Piranha.Navigation
         public static bool operator !=(LinkField field1, LinkField field2)
         {
             return !(field1 == field2);
-        }
-
-        /// <summary>
-        /// Gets the referenced page or post. Will return null if the type is not page or post
-        /// </summary>
-        /// <param name="api">The current api</param>
-        /// <returns>The referenced page or post</returns>
-        private async Task<RoutedContentBase> GetContentInfo(IApi api)
-        {
-            if (Id.HasValue)
-            {
-                switch (Type)
-                {
-                    case LinkType.Page:
-                        return (await GetPage(api)) ?? (await GetPost(api));
-                    case LinkType.Post:
-                        return (await GetPost(api)) ?? (await GetPage(api));
-                }
-            }
-
-            return null;
-        }
-
-        private async Task<RoutedContentBase> GetPage(IApi api)
-        {
-            return await api.Pages
-                .GetByIdAsync<PageInfo>(Id.Value)
-                .ConfigureAwait(false);
-        }
-
-        private async Task<RoutedContentBase> GetPost(IApi api)
-        {
-            return await api.Posts
-                .GetByIdAsync<PostInfo>(Id.Value)
-                .ConfigureAwait(false);
         }
     }
 }

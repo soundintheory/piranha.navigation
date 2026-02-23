@@ -1,9 +1,8 @@
-﻿using Piranha;
+using Piranha;
 using SoundInTheory.Piranha.Navigation.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SoundInTheory.Piranha.Navigation.Services
@@ -37,6 +36,20 @@ namespace SoundInTheory.Piranha.Navigation.Services
             }
 
             return links;
+        }
+
+        /// <summary>
+        /// Resolves a stored link by its ID, routing to the provider that owns the given link type.
+        /// Returns null if no matching provider is found or the content does not exist.
+        /// </summary>
+        public async Task<LinkedObject> GetByIdAsync(string id, string linkType)
+        {
+            var provider = _linkProviders.FirstOrDefault(p =>
+                string.Equals(p.LinkType, linkType, StringComparison.OrdinalIgnoreCase));
+
+            return provider != null
+                ? await provider.GetByIdAsync(id).ConfigureAwait(false)
+                : null;
         }
 
         protected virtual async Task<Guid> GetSiteId(Guid? selected) => selected ?? (await _api.Sites.GetDefaultAsync()).Id;
