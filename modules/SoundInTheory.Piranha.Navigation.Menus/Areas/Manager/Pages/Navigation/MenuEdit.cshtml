@@ -62,7 +62,7 @@
                     </div>
                     <div class="menu-container dd" :data-id="menu.id">
                         <ol class="dd-list">
-                            <navigation-menu-item v-for="item in menu.items" v-bind:key="item.id" v-bind:item="item" v-bind:menu="menu" v-bind:level="1"></navigation-menu-item>
+                            <navigation-menu-item v-for="(item, index) in menu.items" :key="item.id" v-bind:item="item" v-bind:menu="menu" v-bind:level="1" v-bind:item-index="index"></navigation-menu-item>
                         </ol>
                     </div>
                     <div class="empty-info" v-if="!menu.items || menu.items.length == 0">

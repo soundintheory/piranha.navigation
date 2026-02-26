@@ -4,7 +4,7 @@
         data: function() {
             return {}
         },
-        props: ['template', 'item'],
+        props: ['template', 'item', 'itemIndex', 'parent', 'level'],
         created () {
             this.$options.template = `<span>${this.template || ''}</span>`;
         }

@@ -8,16 +8,16 @@
                     <a v-else v-on:click.prevent="toggle()" class="expand" href="#"><i class="fas fa-plus"></i></a>
                 </span>
                 <a v-if="piranha.navigation.permissions.menus.editItems" href="#" v-on:click.prevent="piranha.navigation.menuedit.editItem(item)">
-                    <dynamic-item-label v-if="!!itemType && !!itemType.listTitle" v-bind:template="itemType.listTitle" v-bind:item="item"></dynamic-item-label>
+                    <dynamic-item-label v-if="!!itemType && !!itemType.listTitle" v-bind:template="itemType.listTitle" v-bind:item="item" v-bind:item-index="itemIndex" v-bind:parent="parent" v-bind:level="level"></dynamic-item-label>
                     <span v-else>{{ defaultLabel }}</span>
                 </a>
                 <span v-else class="title">
-                    <dynamic-item-label v-if="!!itemType && !!itemType.listTitle" v-bind:template="itemType.listTitle" v-bind:item="item"></dynamic-item-label>
+                    <dynamic-item-label v-if="!!itemType && !!itemType.listTitle" v-bind:template="itemType.listTitle" v-bind:item="item" v-bind:item-index="itemIndex" v-bind:parent="parent" v-bind:level="level"></dynamic-item-label>
                     <span v-else>{{ defaultLabel }}</span>
                 </span>
             </div>
             <div class="type d-none d-md-block">
-                <dynamic-item-label v-if="!!itemType && !!itemType.listType" v-bind:template="itemType.listType" v-bind:item="item"></dynamic-item-label>
+                <dynamic-item-label v-if="!!itemType && !!itemType.listType" v-bind:template="itemType.listType" v-bind:item="item" v-bind:item-index="itemIndex" v-bind:parent="parent" v-bind:level="level"></dynamic-item-label>
                 <span v-else>{{ defaultTypeName }}</span>
             </div>
             <div class="item-actions">
@@ -31,7 +31,7 @@
             </div>
         </div>
         <ol v-if="hasChildren" class="dd-list">
-            <navigation-menu-item v-for="child in item.children" v-bind:key="child.id" v-bind:item="child" v-bind:menu="menu" v-bind:level="(level || 0) + 1">
+            <navigation-menu-item v-for="(child, index) in item.children" :key="child.id" v-bind:item="child" v-bind:menu="menu" v-bind:level="(level || 0) + 1" v-bind:parent="item" v-bind:item-index="index">
             </navigation-menu-item>
         </ol>
     </li>
@@ -39,7 +39,7 @@
 
 <script>
 export default {
-    props: ["item", "menu", "level"],
+    props: ["item", "menu", "level", "itemIndex", "parent"],
     inject: ['root'],
     data: function () {
         return {
