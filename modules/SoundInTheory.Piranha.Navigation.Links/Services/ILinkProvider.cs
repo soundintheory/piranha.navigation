@@ -15,7 +15,7 @@ namespace SoundInTheory.Piranha.Navigation.Services
         /// </summary>
         string LinkType { get; }
 
-        Task<IEnumerable<Link>> GetAllAsync(Guid siteId);
+        Task<IEnumerable<LinkedObject>> GetAllAsync(Guid siteId);
 
         /// <summary>
         /// Resolves a stored link by its content ID. Returns null if not found or if this

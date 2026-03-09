@@ -19,11 +19,11 @@ namespace SoundInTheory.Piranha.Navigation.Services
 
         public string LinkType => Models.LinkType.Post;
 
-        public virtual async Task<IEnumerable<Link>> GetAllAsync(Guid siteId)
+        public virtual async Task<IEnumerable<LinkedObject>> GetAllAsync(Guid siteId)
         {
             var posts = await _api.Posts.GetAllBySiteIdAsync<PostInfo>(siteId);
 
-            return posts.Select(x => (Link)x).Where(x => x != null);
+            return posts.Select(x => new LinkedObject(x)).Where(x => x.Link != null);
         }
 
         public async Task<LinkedObject> GetByIdAsync(string id)
@@ -33,12 +33,12 @@ namespace SoundInTheory.Piranha.Navigation.Services
 
             var post = await _api.Posts.GetByIdAsync<PostInfo>(guid).ConfigureAwait(false);
             if (post != null)
-                return new LinkedObject { Link = (Link)post, Content = post };
+                return new LinkedObject(post) { Content = post };
 
             // Backward-compat fallback: old data may have stored "Post" for what is actually a page
             var page = await _api.Pages.GetByIdAsync<PageInfo>(guid).ConfigureAwait(false);
             if (page != null)
-                return new LinkedObject { Link = (Link)page, Content = page };
+                return new LinkedObject(page) { Content = page };
 
             return null;
         }

@@ -17,11 +17,11 @@ namespace NavigationMvcExample.Services
         // Sub-links are page-based; PageLinkProvider handles ID resolution for "Page" type.
         public string LinkType => NavigationLinkType.Page;
 
-        public async Task<IEnumerable<Link>> GetAllAsync(Guid siteId)
+        public async Task<IEnumerable<LinkedObject>> GetAllAsync(Guid siteId)
         {
             var siteList = await _pageService.GetSiteList(siteId);
 
-            return siteList.Items.Select(x => Link.FromPageItem(x).SubLink("child-page", "Child Page"));
+            return siteList.Items.Select(x => new LinkedObject(Link.FromPageItem(x).SubLink("child-page", "Child Page")));
         }
 
         public Task<LinkedObject> GetByIdAsync(string id)

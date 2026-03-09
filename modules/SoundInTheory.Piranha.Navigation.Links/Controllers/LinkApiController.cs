@@ -37,7 +37,10 @@ namespace SoundInTheory.Piranha.Navigation.Controllers
             var links = await _linkService.GetLinksAsync(options);
 
             return Content(
-                content: JsonConvert.SerializeObject(links, new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() }),
+                content: JsonConvert.SerializeObject(links, new JsonSerializerSettings
+                {
+                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                }),
                 contentType: MediaTypeNames.Application.Json,
                 contentEncoding: Encoding.UTF8
             );

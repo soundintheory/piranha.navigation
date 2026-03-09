@@ -67,21 +67,27 @@
                         },
                         processResults: (data) => {
                             return {
-                                results: data || []
+                                results: (data || []).map(result => {
+                                    if (result.link) {
+                                        result.text ??= result.link.text;
+                                        result.id ??= result.link.id;
+                                    }
+                                    return result;
+                                })
                             };
                         }
                     },
-                    templateResult: (link) => {
-                        if (!link.id) {
-                            return link.text;
+                    templateResult: (result) => {
+                        if (!result.link || !result.link.id) {
+                            return result.text ?? result.link.text;
                         }
-                        return $('<span><span class="badge badge-light">' + link.type + '</span> ' + link.text + '</span>');
+                        return $('<span><span class="badge badge-light">' + result.link.type + '</span> ' + (result.text ?? result.link.text) + '</span>');
                     },
-                    templateSelection: (link) => {
-                        if (!link.id) {
-                            return link.text;
+                    templateSelection: (result) => {
+                        if (!result.link || !result.link.id) {
+                            return result.text ?? result.link.text;
                         }
-                        return $('<span><span class="badge badge-info">' + link.type + '</span> ' + link.text + '</span>');
+                        return $('<span><span class="badge badge-info">' + result.link.type + '</span> ' + (result.text ?? result.link.text) + '</span>');
                     }
                 });
             },
@@ -102,7 +108,7 @@
 
                 // when a selection is made
                 select.on('select2:select', (e) => {
-                    this.setValue(e.params ? e.params.data : null);
+                    this.setValue(e.params && e.params.data ? e.params.data.link : null);
                 });
 
                 // when the selection is cleared

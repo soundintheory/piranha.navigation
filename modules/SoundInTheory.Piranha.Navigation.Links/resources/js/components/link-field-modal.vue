@@ -149,7 +149,7 @@
                 return !this.currentModel.path && this.hasContentLink && this.currentModel.contentLink.text;
             },
             hasContentLink: function () {
-                return this.currentModel && this.currentModel.contentLink && (this.currentModel.type === 'Page' || this.currentModel.type === 'Post');
+                return this.currentModel && this.currentModel.contentLink && this.currentModel.type && this.currentModel.type !== 'Custom';
             }
         },
         watch: {
@@ -244,7 +244,12 @@
             initSelect2: function (delay) {
 
                 var input = $(this.$refs.existingContentSelect);
-                var selectedValue = this.currentModel && this.currentModel.contentLink ? this.currentModel.contentLink : null;
+                var link = this.currentModel && this.currentModel.contentLink ? this.currentModel.contentLink : null;
+                var selectedValue = null;
+
+                if (link) {
+                    selectedValue = { link: link, text: link.text, id: link.id };
+                }
 
                 // destroy if already initialised
                 if (input.hasClass("select2-hidden-accessible")) {
@@ -274,26 +279,30 @@
                             },
                             processResults: (data) => {
                                 return {
-                                    results: (data || []).map((link) => {
-                                        if (link.path) {
-                                            link.id = link.id + '__' + link.path;
+                                    results: (data || []).map((result) => {
+                                        if (result.link) {
+                                            if (result.link.path) {
+                                                result.link.id = result.link.id + '__' + result.link.path;
+                                            }
+                                            result.text ??= result.link.text;
+                                            result.id ??= result.link.id;
                                         }
-                                        return link;
+                                        return result;
                                     })
                                 };
                             }
                         },
-                        templateResult: (link) => {
-                            if (!link.id && !link.parentId) {
-                                return link.text;
+                        templateResult: (result) => {
+                            if (!result.link || (!result.link.id && !result.link.parentId)) {
+                                return result.text;
                             }
-                            return $('<span><span class="badge badge-light">' + link.type + '</span> ' + link.text + '</span>');
+                            return $('<span><span class="badge badge-light">' + result.link.type + '</span> ' + (result.text ?? result.link.text) + '</span>');
                         },
-                        templateSelection: (link) => {
-                            if (!link.id && !link.parentId) {
-                                return link.text;
+                        templateSelection: (result) => {
+                            if (!result.link || (!result.link.id && !result.link.parentId)) {
+                                return result.text;
                             }
-                            return $('<span><span class="badge badge-info">' + link.type + '</span> ' + link.text + '</span>');
+                            return $('<span><span class="badge badge-info">' + result.link.type + '</span> ' + (result.text ?? result.link.text) + '</span>');
                         }
                     })
                     .on('select2:open', (e) => {
@@ -306,7 +315,7 @@
                         }
                     })
                     .on('select2:select', (e) => {
-                        var link = e.params ? e.params.data : null;
+                        var link = e.params && e.params.data ? e.params.data.link : null;
                         if (link && link.id) {
                             link = Object.assign({}, link);
                             link.id = link.id.split('__')[0];

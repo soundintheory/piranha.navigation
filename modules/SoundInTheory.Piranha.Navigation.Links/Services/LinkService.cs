@@ -19,10 +19,10 @@ namespace SoundInTheory.Piranha.Navigation.Services
             _linkProviders = linkProviders.ToArray();
         }
 
-        public async Task<IEnumerable<Link>> GetLinksAsync(LinkListOptions options)
+        public async Task<IEnumerable<LinkedObject>> GetLinksAsync(LinkListOptions options)
         {
             var siteId = await GetSiteId(options.SiteId);
-            var links = new List<Link>();
+            var links = new List<LinkedObject>();
 
             foreach (var provider in _linkProviders)
             {
@@ -32,7 +32,14 @@ namespace SoundInTheory.Piranha.Navigation.Services
 
             if (options.Search != null)
             {
-                links = links.Where(x => x.Text.Contains(options.Search, StringComparison.InvariantCultureIgnoreCase) || x.Url.Contains(options.Search, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                links = links
+                    .Where(x => x.Link != null && !string.IsNullOrEmpty(x.Link.Url))
+                    .Where(x => 
+                        x.Link.Text?.Contains(options.Search, StringComparison.InvariantCultureIgnoreCase) == true ||
+                        x.Text?.Contains(options.Search, StringComparison.InvariantCultureIgnoreCase) == true ||
+                        x.Link.Url.Contains(options.Search, StringComparison.InvariantCultureIgnoreCase))
+
+                    .ToList();
             }
 
             return links;

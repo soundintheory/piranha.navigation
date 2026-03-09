@@ -16,14 +16,20 @@ namespace NavigationMvcExample.Services
 
         public string LinkType => "MyCustomLink";
 
-        public Task<IEnumerable<Link>> GetAllAsync(Guid siteId)
+        public Task<IEnumerable<LinkedObject>> GetAllAsync(Guid siteId)
         {
             return Task.FromResult(Enumerable.Range(1, 20)
-                .Select(i => new Link {
-                    Id = i.ToString(),
-                    Url = $"/my-custom-link-{i}",
-                    Text = $"My Custom Link #{i}",
-                    Type = LinkType
+                .Select(i =>
+                {
+                    var link = new Link
+                    {
+                        Id = i.ToString(),
+                        Url = $"/my-custom-link-{i}",
+                        Text = $"Custom Link {i}",
+                        Type = LinkType
+                    };
+
+                    return new LinkedObject(link, $"My Custom Link #{i}");
                 }));
         }
 
@@ -33,11 +39,11 @@ namespace NavigationMvcExample.Services
             {
                 Id = id,
                 Url = $"/my-custom-link-{id}",
-                Text = $"My Custom Link #{id}",
+                Text = $"Custom Link {id}",
                 Type = LinkType
             };
 
-            return Task.FromResult(new LinkedObject { Link = link });
+            return Task.FromResult(new LinkedObject(link, $"My Custom Link #{id}"));
         }
     }
 }
