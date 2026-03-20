@@ -32,9 +32,5 @@
     <ProjectReference Include="..\..\modules\SoundInTheory.Piranha.Navigation.Links\SoundInTheory.Piranha.Navigation.Links.csproj" />
     <ProjectReference Include="..\..\modules\SoundInTheory.Piranha.Navigation.Menus\SoundInTheory.Piranha.Navigation.Menus.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="NewFolder\" />
-  </ItemGroup>
   
 </Project>
