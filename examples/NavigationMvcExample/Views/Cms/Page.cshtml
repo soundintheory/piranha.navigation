@@ -23,7 +23,8 @@
 </header>
 
 <div>
-    <a id="my-link-field" class="link-field" link="Model.Content.LinkField" />
+    @* <a id="my-link-field" class="link-field" link="Model.Content.LinkField" /> *@
+    @Model.Content.LinkField.Render("link-field");
 </div>
 
 <main>
