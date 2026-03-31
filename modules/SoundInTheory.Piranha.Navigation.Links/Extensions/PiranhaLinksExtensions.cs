@@ -63,11 +63,13 @@ public static class PiranhaLinksExtensions
             RequestPath = "/manager/Navigation/assets"
         });
 
+        var assetVersion = Utils.GetAssemblyVersionHash(typeof(LinksModule).Assembly);
+
         App.Fields.Register<LinkField>();
         App.Blocks.Register<LinkBlock>();
         App.Serializers.Register<LinkField>(new LinkFieldSerializer());
-        App.Modules.Manager().Scripts.Add("~/manager/Navigation/assets/js/link-field.js");
-        App.Modules.Manager().Styles.Add("~/manager/Navigation/assets/css/link-field.css");
+        App.Modules.Manager().Scripts.Add($"~/manager/Navigation/assets/js/link-field.js?v={assetVersion}");
+        App.Modules.Manager().Styles.Add($"~/manager/Navigation/assets/css/link-field.css?v={assetVersion}");
         return builder;
     }
 

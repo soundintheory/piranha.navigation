@@ -3,13 +3,12 @@ Vue.component("navigation-menu-item", {
   inject: ['root'],
   data: function () {
     return {
-      isExpanded: true,
       isNode: true
     };
   },
   methods: {
     toggle: function () {
-      this.isExpanded = !this.isExpanded;
+      this.item.isExpanded = !this.item.isExpanded;
     },
     getProperty: function (obj, path) {
       var arr = path.split(".").filter(x => !!x);
@@ -88,7 +87,7 @@ Vue.component("navigation-menu-item", {
       });
     }
   },
-  template: "\n<li class=\"dd-item\" :class=\"{ expanded: isExpanded || !hasChildren }\" :data-id=\"item.id\" :data-item-type=\"item.$typeId\" :data-level=\"level\">\n    <div class=\"nav-menu-item\" :class=\"{ dimmed: item.isUnpublished || item.isScheduled }\">\n        <div v-if=\"piranha.navigation.permissions.menus.editItems\" class=\"handle dd-handle\"><i class=\"fas fa-ellipsis-v\"></i></div>\n        <div class=\"link\">\n            <span class=\"actions\" v-if=\"hasChildren\">\n                <a v-if=\"isExpanded\" v-on:click.prevent=\"toggle()\" class=\"expand\" href=\"#\"><i class=\"fas fa-minus\"></i></a>\n                <a v-else v-on:click.prevent=\"toggle()\" class=\"expand\" href=\"#\"><i class=\"fas fa-plus\"></i></a>\n            </span>\n            <a v-if=\"piranha.navigation.permissions.menus.editItems\" href=\"#\" v-on:click.prevent=\"piranha.navigation.menuedit.editItem(item)\">\n                <dynamic-item-label v-if=\"!!itemType && !!itemType.listTitle\" v-bind:template=\"itemType.listTitle\" v-bind:item=\"item\" v-bind:item-index=\"itemIndex\" v-bind:parent=\"parent\" v-bind:level=\"level\"></dynamic-item-label>\n                <span v-else>{{ defaultLabel }}</span>\n            </a>\n            <span v-else class=\"title\">\n                <dynamic-item-label v-if=\"!!itemType && !!itemType.listTitle\" v-bind:template=\"itemType.listTitle\" v-bind:item=\"item\" v-bind:item-index=\"itemIndex\" v-bind:parent=\"parent\" v-bind:level=\"level\"></dynamic-item-label>\n                <span v-else>{{ defaultLabel }}</span>\n            </span>\n        </div>\n        <div class=\"type d-none d-md-block\">\n            <dynamic-item-label v-if=\"!!itemType && !!itemType.listType\" v-bind:template=\"itemType.listType\" v-bind:item=\"item\" v-bind:item-index=\"itemIndex\" v-bind:parent=\"parent\" v-bind:level=\"level\"></dynamic-item-label>\n            <span v-else>{{ defaultTypeName }}</span>\n        </div>\n        <div class=\"item-actions\">\n            <template v-if=\"piranha.navigation.permissions.menus.editItems\">\n                <add-item-link v-if=\"canAddChildren\" link-class=\"action\" :position=\"{ parentId: item.id }\" header=\"Add Child...\" :available-types=\"availableItemTypes\">\n                    <i class=\"fas fa-plus\"></i>\n                </add-item-link>\n                <span v-else style=\"visibility:hidden;\"><i class=\"fas fa-plus\"></i></span>\n            </template>\n            <a v-if=\"piranha.navigation.permissions.menus.deleteItems\" v-on:click.prevent=\"piranha.navigation.menuedit.removeItem(item.id)\" class=\"action text-danger\" href=\"#\"><i class=\"fas fa-trash\"></i></a>\n        </div>\n    </div>\n    <ol v-if=\"hasChildren\" class=\"dd-list\">\n        <navigation-menu-item v-for=\"(child, index) in item.children\" :key=\"child.id\" v-bind:item=\"child\" v-bind:menu=\"menu\" v-bind:level=\"(level || 0) + 1\" v-bind:parent=\"item\" v-bind:item-index=\"index\">\n        </navigation-menu-item>\n    </ol>\n</li>\n"
+  template: "\n<li class=\"dd-item\" :class=\"{ expanded: item.isExpanded || !hasChildren }\" :data-id=\"item.id\" :data-item-type=\"item.$typeId\" :data-level=\"level\">\n    <div class=\"nav-menu-item\" :class=\"{ dimmed: item.isUnpublished || item.isScheduled }\">\n        <div v-if=\"piranha.navigation.permissions.menus.editItems\" class=\"handle dd-handle\"><i class=\"fas fa-ellipsis-v\"></i></div>\n        <div class=\"link\">\n            <span class=\"actions\" v-if=\"hasChildren\">\n                <a v-if=\"item.isExpanded\" v-on:click.prevent=\"toggle()\" class=\"expand\" href=\"#\"><i class=\"fas fa-minus\"></i></a>\n                <a v-else v-on:click.prevent=\"toggle()\" class=\"expand\" href=\"#\"><i class=\"fas fa-plus\"></i></a>\n            </span>\n            <a v-if=\"piranha.navigation.permissions.menus.editItems\" href=\"#\" v-on:click.prevent=\"piranha.navigation.menuedit.editItem(item)\">\n                <dynamic-item-label v-if=\"!!itemType && !!itemType.listTitle\" v-bind:template=\"itemType.listTitle\" v-bind:item=\"item\" v-bind:item-index=\"itemIndex\" v-bind:parent=\"parent\" v-bind:level=\"level\"></dynamic-item-label>\n                <span v-else>{{ defaultLabel }}</span>\n            </a>\n            <span v-else class=\"title\">\n                <dynamic-item-label v-if=\"!!itemType && !!itemType.listTitle\" v-bind:template=\"itemType.listTitle\" v-bind:item=\"item\" v-bind:item-index=\"itemIndex\" v-bind:parent=\"parent\" v-bind:level=\"level\"></dynamic-item-label>\n                <span v-else>{{ defaultLabel }}</span>\n            </span>\n        </div>\n        <div class=\"type d-none d-md-block\">\n            <dynamic-item-label v-if=\"!!itemType && !!itemType.listType\" v-bind:template=\"itemType.listType\" v-bind:item=\"item\" v-bind:item-index=\"itemIndex\" v-bind:parent=\"parent\" v-bind:level=\"level\"></dynamic-item-label>\n            <span v-else>{{ defaultTypeName }}</span>\n        </div>\n        <div class=\"item-actions\">\n            <template v-if=\"piranha.navigation.permissions.menus.editItems\">\n                <add-item-link v-if=\"canAddChildren\" link-class=\"action\" :position=\"{ parentId: item.id }\" header=\"Add Child...\" :available-types=\"availableItemTypes\">\n                    <i class=\"fas fa-plus\"></i>\n                </add-item-link>\n                <span v-else style=\"visibility:hidden;\"><i class=\"fas fa-plus\"></i></span>\n            </template>\n            <a v-if=\"piranha.navigation.permissions.menus.deleteItems\" v-on:click.prevent=\"piranha.navigation.menuedit.removeItem(item.id)\" class=\"action text-danger\" href=\"#\"><i class=\"fas fa-trash\"></i></a>\n        </div>\n    </div>\n    <ol v-if=\"hasChildren\" class=\"dd-list\">\n        <navigation-menu-item v-for=\"(child, index) in item.children\" :key=\"child.id\" v-bind:item=\"child\" v-bind:menu=\"menu\" v-bind:level=\"(level || 0) + 1\" v-bind:parent=\"item\" v-bind:item-index=\"index\">\n        </navigation-menu-item>\n    </ol>\n</li>\n"
 });
 Vue.component("dynamic-item-label", {
   data: function () {
@@ -124,14 +123,17 @@ piranha.navigation = piranha.navigation || {};
 
 piranha.navigation.menuedit = new Vue({
     el: "#menuedit",
-    data: {
-        loading: true,
-        menu: null,
-        availableItemTypes: [],
-        addSiteTitle: null,
-        addToSiteId: null,
-        addPageId: null,
-        currentState: null
+    data: function () {
+        return {
+            loading: true,
+            menu: null,
+            availableItemTypes: [],
+            addSiteTitle: null,
+            addToSiteId: null,
+            addPageId: null,
+            currentState: null,
+            expandedNodes: {}
+        };
     },
     provide: function() {
         return {
@@ -314,7 +316,8 @@ piranha.navigation.menuedit = new Vue({
         },
         setMenu: function (menu) {
 
-            console.log('setMenu: ', menu);
+            this.applyInitialState(menu);
+
             if (this.menu) {
                 $('.menu-container').nestable('destroy');
                 this.menu = null;
@@ -329,6 +332,78 @@ piranha.navigation.menuedit = new Vue({
         },
         getParentNode: function (el) {
             return $(el).parents('[data-item-type].dd-item').first();
+        },
+        applyInitialState: function (menu) {
+
+            if (!menu || !menu.id) {
+                return;
+            }
+
+            this.expandedNodes = this.getExpandedNodes(menu.id);
+            let expandAll = Object.keys(this.expandedNodes).length === 0;
+
+            const applyStateRecursive = (items) => {
+                if (!items || !items.length) {
+                    return;
+                }
+                items.forEach(item => {
+                    item.isExpanded = expandAll || !!this.expandedNodes[item.id];
+
+                    if (item.children && item.children.length > 0) {
+                        applyStateRecursive(item.children);
+                    }
+                });
+            }
+
+            applyStateRecursive(menu.items);
+        },
+        getExpandedNodes: function (menuId) {
+
+            if (!menuId) {
+                return {};
+            }
+
+            let serialisedValue = window.localStorage.getItem(`menu.${menuId}.expandedNodes`);
+
+            if (!serialisedValue) {
+                return {};
+            }
+
+            try {
+                let parsedValue = JSON.parse(serialisedValue);
+                return parsedValue || {};
+            } catch { }
+
+            return {};
+        },
+        saveExpandedNodes: function (menu) {
+
+            if (!menu || !menu.id) {
+                return;
+            }
+
+            const buildDataRecursive = (children, output) => {
+                output = output || {};
+
+                if (!children || !children.length) {
+                    return output;
+                }
+
+                children.forEach(child => {
+                    if (child.id) {
+                        output[child.id] = !!child.isExpanded;
+                    }
+                    if (child.children && child.children.length > 0) {
+                        output = buildDataRecursive(child.children, output);
+                    }
+                });
+
+                return output;
+            }
+
+            let expandedNodesData = buildDataRecursive(menu.items);
+
+            window.localStorage.setItem(`menu.${menu.id}.expandedNodes`, JSON.stringify(expandedNodesData));
         }
     },
     computed: {
@@ -346,6 +421,14 @@ piranha.navigation.menuedit = new Vue({
                 return true;
             });
         }
+    },
+    watch: {
+        menu: {
+            handler: function (newValue) {
+                this.saveExpandedNodes(newValue);
+            },
+            deep: true
+        },
     },
     created: function () {
     }

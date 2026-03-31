@@ -6,14 +6,17 @@ piranha.navigation = piranha.navigation || {};
 
 piranha.navigation.menuedit = new Vue({
     el: "#menuedit",
-    data: {
-        loading: true,
-        menu: null,
-        availableItemTypes: [],
-        addSiteTitle: null,
-        addToSiteId: null,
-        addPageId: null,
-        currentState: null
+    data: function () {
+        return {
+            loading: true,
+            menu: null,
+            availableItemTypes: [],
+            addSiteTitle: null,
+            addToSiteId: null,
+            addPageId: null,
+            currentState: null,
+            expandedNodes: {}
+        };
     },
     provide: function() {
         return {
@@ -196,7 +199,8 @@ piranha.navigation.menuedit = new Vue({
         },
         setMenu: function (menu) {
 
-            console.log('setMenu: ', menu);
+            this.applyInitialState(menu);
+
             if (this.menu) {
                 $('.menu-container').nestable('destroy');
                 this.menu = null;
@@ -211,6 +215,78 @@ piranha.navigation.menuedit = new Vue({
         },
         getParentNode: function (el) {
             return $(el).parents('[data-item-type].dd-item').first();
+        },
+        applyInitialState: function (menu) {
+
+            if (!menu || !menu.id) {
+                return;
+            }
+
+            this.expandedNodes = this.getExpandedNodes(menu.id);
+            let expandAll = Object.keys(this.expandedNodes).length === 0;
+
+            const applyStateRecursive = (items) => {
+                if (!items || !items.length) {
+                    return;
+                }
+                items.forEach(item => {
+                    item.isExpanded = expandAll || !!this.expandedNodes[item.id];
+
+                    if (item.children && item.children.length > 0) {
+                        applyStateRecursive(item.children);
+                    }
+                });
+            }
+
+            applyStateRecursive(menu.items);
+        },
+        getExpandedNodes: function (menuId) {
+
+            if (!menuId) {
+                return {};
+            }
+
+            let serialisedValue = window.localStorage.getItem(`menu.${menuId}.expandedNodes`);
+
+            if (!serialisedValue) {
+                return {};
+            }
+
+            try {
+                let parsedValue = JSON.parse(serialisedValue);
+                return parsedValue || {};
+            } catch { }
+
+            return {};
+        },
+        saveExpandedNodes: function (menu) {
+
+            if (!menu || !menu.id) {
+                return;
+            }
+
+            const buildDataRecursive = (children, output) => {
+                output = output || {};
+
+                if (!children || !children.length) {
+                    return output;
+                }
+
+                children.forEach(child => {
+                    if (child.id) {
+                        output[child.id] = !!child.isExpanded;
+                    }
+                    if (child.children && child.children.length > 0) {
+                        output = buildDataRecursive(child.children, output);
+                    }
+                });
+
+                return output;
+            }
+
+            let expandedNodesData = buildDataRecursive(menu.items);
+
+            window.localStorage.setItem(`menu.${menu.id}.expandedNodes`, JSON.stringify(expandedNodesData));
         }
     },
     computed: {
@@ -228,6 +304,14 @@ piranha.navigation.menuedit = new Vue({
                 return true;
             });
         }
+    },
+    watch: {
+        menu: {
+            handler: function (newValue) {
+                this.saveExpandedNodes(newValue);
+            },
+            deep: true
+        },
     },
     created: function () {
     }

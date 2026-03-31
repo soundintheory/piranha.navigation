@@ -1,10 +1,10 @@
 ﻿<template>
-    <li class="dd-item" :class="{ expanded: isExpanded || !hasChildren }" :data-id="item.id" :data-item-type="item.$typeId" :data-level="level">
+    <li class="dd-item" :class="{ expanded: item.isExpanded || !hasChildren }" :data-id="item.id" :data-item-type="item.$typeId" :data-level="level">
         <div class="nav-menu-item" :class="{ dimmed: item.isUnpublished || item.isScheduled }">
             <div v-if="piranha.navigation.permissions.menus.editItems" class="handle dd-handle"><i class="fas fa-ellipsis-v"></i></div>
             <div class="link">
                 <span class="actions" v-if="hasChildren">
-                    <a v-if="isExpanded" v-on:click.prevent="toggle()" class="expand" href="#"><i class="fas fa-minus"></i></a>
+                    <a v-if="item.isExpanded" v-on:click.prevent="toggle()" class="expand" href="#"><i class="fas fa-minus"></i></a>
                     <a v-else v-on:click.prevent="toggle()" class="expand" href="#"><i class="fas fa-plus"></i></a>
                 </span>
                 <a v-if="piranha.navigation.permissions.menus.editItems" href="#" v-on:click.prevent="piranha.navigation.menuedit.editItem(item)">
@@ -43,13 +43,12 @@ export default {
     inject: ['root'],
     data: function () {
         return {
-            isExpanded: true,
             isNode: true
         }
     },
     methods: {
         toggle: function() {
-            this.isExpanded = !this.isExpanded;
+            this.item.isExpanded = !this.item.isExpanded;
         },
         getProperty: function (obj, path) {
             var arr = path.split(".").filter(x => !!x);
