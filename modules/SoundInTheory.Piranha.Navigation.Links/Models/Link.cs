@@ -1,16 +1,19 @@
-﻿using Newtonsoft.Json;
-using Piranha.Models;
+﻿using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using Piranha;
+using Piranha.AspNetCore.Services;
+using Piranha.Manager.Localization;
+using Piranha.Models;
+using SoundInTheory.Piranha.Navigation.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static Piranha.Manager.Models.PageListModel;
 using static Piranha.Manager.Models.PostModalModel;
-using System.Xml.Linq;
-using System.Text.RegularExpressions;
-using SoundInTheory.Piranha.Navigation.Extensions;
 
 namespace SoundInTheory.Piranha.Navigation.Models
 {
@@ -155,17 +158,81 @@ namespace SoundInTheory.Piranha.Navigation.Models
         /// <summary>
         /// Helper method for creating a link object from Piranha content
         /// </summary>
-        public static Link FromContent(RoutedContentBase contentItem) => (Link)contentItem;
+        public static Link FromContent(RoutedContentBase contentItem, IApplicationService app = null)
+        {
+            if (contentItem is PageBase page)
+            {
+                return FromPage(page, app);
+            }
+
+            if (contentItem is PostBase post)
+            {
+                return FromPost(post, app);
+            }
+
+            return (Link)contentItem;
+        }
 
         /// <summary>
         /// Helper method for creating a link object from a Piranha manager page item
         /// </summary>
-        public static Link FromPageItem(PageItem pageItem) => (Link)pageItem;
+        public static Link FromPageItem(PageItem pageItem, IApplicationService app = null)
+        {
+            var link = (Link)pageItem;
+
+            if (app != null && pageItem != null)
+            {
+                link.Url = app.UrlWithPrefix(link.Url, pageItem.SiteId);
+            }
+
+            return link;
+        }
 
         /// <summary>
         /// Helper method for creating a link object from a Piranha manager post item
         /// </summary>
-        public static Link FromPostItem(PostModalItem postItem) => (Link)postItem;
+        public static Link FromPostItem(PostModalItem postItem, IApplicationService app = null)
+        {
+            var link = (Link)postItem;
+
+            if (app != null && postItem != null)
+            {
+                var post = app.Api.Posts.GetByIdAsync<PostInfo>(postItem.Id).GetAwaiter().GetResult();
+                link.Url = app.UrlWithPrefix(post);
+            }
+
+            return link;
+        }
+
+        /// <summary>
+        /// Helper method for creating a link object from a Piraha page
+        /// </summary>
+        public static Link FromPage(PageBase page, IApplicationService app = null)
+        {
+            var link = (Link)page;
+
+            if (app != null && page != null)
+            {
+                link.Url = app.UrlWithPrefix(page);
+            }
+
+            return link;
+        }
+
+        /// <summary>
+        /// Helper method for creating a link object from a Piraha page
+        /// </summary>
+        public static Link FromPost(PostBase post, IApplicationService app = null)
+        {
+            var link = (Link)post;
+
+            if (app != null && post != null)
+            {
+                link.Url = app.UrlWithPrefix(post);
+            }
+
+            return link;
+        }
 
         /// <summary>
         /// Gets the hash code for the field.

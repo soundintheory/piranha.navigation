@@ -18,6 +18,8 @@ public static class LinkExtensions
 {
     public static IServiceCollection AddLinkServices(this IServiceCollection services)
     {
+        services.AddHttpContextAccessor();
+        services.AddScoped<ApplicationServiceAccessor>();
         services.AddLinkProvider<PageLinkProvider>();
         services.AddLinkProvider<PostLinkProvider>();
         services.TryAddScoped<LinkService>();

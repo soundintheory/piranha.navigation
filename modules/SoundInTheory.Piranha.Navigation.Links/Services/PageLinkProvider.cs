@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Http;
 using Piranha;
+using Piranha.AspNetCore.Services;
 using Piranha.Models;
 using SoundInTheory.Piranha.Navigation.Models;
 using System;
@@ -13,19 +15,22 @@ namespace SoundInTheory.Piranha.Navigation.Services
     {
         private readonly IApi _api;
 
-        public PageLinkProvider(IApi api)
+        private readonly ApplicationServiceAccessor _appAccessor;
+
+        public PageLinkProvider(IApi api, ApplicationServiceAccessor appAccessor)
         {
             _api = api;
+            _appAccessor = appAccessor;
         }
 
         public string LinkType => Models.LinkType.Page;
 
         public virtual async Task<IEnumerable<LinkedObject>> GetAllAsync(Guid siteId)
         {
-            var pages = await _api.Pages.GetAllAsync<PageInfo>();
+            var pages = await _api.Pages.GetAllAsync<PageInfo>(siteId);
             var pagesById = pages.ToDictionary(x => x.Id);
 
-            return pages.Select(x => new LinkedObject(x, GetHierarchicalTitle(x, pagesById))).Where(x => x.Link != null);
+            return pages.Select(x => new LinkedObject(Link.FromPage(x, _appAccessor.ApplicationService), GetHierarchicalTitle(x, pagesById))).Where(x => x.Link != null);
         }
 
         public async Task<LinkedObject> GetByIdAsync(string id)
@@ -35,12 +40,12 @@ namespace SoundInTheory.Piranha.Navigation.Services
 
             var page = await _api.Pages.GetByIdAsync<PageInfo>(guid).ConfigureAwait(false);
             if (page != null)
-                return new LinkedObject(page) { Content = page };
+                return new LinkedObject(Link.FromPage(page, _appAccessor.ApplicationService)) { Content = page };
 
             // Backward-compat fallback: old data may have stored "Page" for what is actually a post
             var post = await _api.Posts.GetByIdAsync<PostInfo>(guid).ConfigureAwait(false);
             if (post != null)
-                return new LinkedObject(post) { Content = post };
+                return new LinkedObject(Link.FromPost(post, _appAccessor.ApplicationService)) { Content = post };
 
             return null;
         }

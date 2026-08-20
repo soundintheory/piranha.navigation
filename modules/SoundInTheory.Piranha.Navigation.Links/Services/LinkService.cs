@@ -1,8 +1,10 @@
 using Piranha;
+using Piranha.Models;
 using SoundInTheory.Piranha.Navigation.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace SoundInTheory.Piranha.Navigation.Services
@@ -21,13 +23,27 @@ namespace SoundInTheory.Piranha.Navigation.Services
 
         public async Task<IEnumerable<LinkedObject>> GetLinksAsync(LinkListOptions options)
         {
-            var siteId = await GetSiteId(options.SiteId);
+            var allSites = (await _api.Sites.GetAllAsync()).ToList();
+            var sites = ResolveSites(options.SiteIds, allSites);
             var links = new List<LinkedObject>();
 
             foreach (var provider in _linkProviders)
             {
-                var providerLinks = await provider.GetAllAsync(siteId);
-                links.AddRange(providerLinks);
+                foreach (var site in sites)
+                {
+                    var providerLinks = (await provider.GetAllAsync(site.Id)).ToList();
+                    
+                    if (sites.Count > 1)
+                    {
+                        // Automatically prefix with the site name when there is more than one site in the mix
+                        providerLinks.ForEach(link =>
+                        {
+                            link.Text = $"{site.Title} > {link.Text}";
+                        });
+                    }
+
+                    links.AddRange(providerLinks);
+                }
             }
 
             if (options.Search != null)
@@ -59,6 +75,20 @@ namespace SoundInTheory.Piranha.Navigation.Services
                 : null;
         }
 
-        protected virtual async Task<Guid> GetSiteId(Guid? selected) => selected ?? (await _api.Sites.GetDefaultAsync()).Id;
+        /// <summary>
+        /// Resolve a list of site ids into site objects
+        /// If the provided array is empty, this will resolve to all of the sites
+        /// </summary>
+        protected virtual List<Site> ResolveSites(Guid[] selected, List<Site> allSites)
+        {
+            if (selected == null || selected.Length == 0)
+            {
+                return allSites;
+            }
+
+            var filteredSites = allSites.Where(x => selected.Contains(x.Id)).ToList();
+
+            return filteredSites.Count > 0 ? filteredSites : allSites;
+        }
     }
 }

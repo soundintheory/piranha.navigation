@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Piranha;
 using Piranha.AspNetCore;
 using SoundInTheory.Piranha.Navigation;
+using SoundInTheory.Piranha.Navigation.Extensions;
 using SoundInTheory.Piranha.Navigation.Serializers;
+using SoundInTheory.Piranha.Navigation.Services;
 using System.IO;
 using System.Runtime.CompilerServices;
 
@@ -46,6 +49,10 @@ public static class PiranhaLinksExtensions
         // Add the LinkField module
         Piranha.App.Modules.Register<LinksModule>();
 
+        // Clear site related caches when needed
+        Piranha.App.Hooks.Site.RegisterOnAfterSave(x => PiranhaAppServiceExtensions.ClearCache());
+        Piranha.App.Hooks.Site.RegisterOnAfterDelete(x => PiranhaAppServiceExtensions.ClearCache());
+
         // Return the service collection
         return services;
     }
@@ -53,9 +60,7 @@ public static class PiranhaLinksExtensions
     /// <summary>
     /// Uses the LinkField.
     /// </summary>
-    /// <param name="builder">The application builder</param>
-    /// <returns>The builder</returns>
-    public static IApplicationBuilder UseLinks(this IApplicationBuilder builder)
+    public static IApplicationBuilder UseLinks(this IApplicationBuilder builder, string defaultBaseUrl = null)
     {
         builder.UseStaticFiles(new StaticFileOptions
         {
@@ -70,6 +75,15 @@ public static class PiranhaLinksExtensions
         App.Serializers.Register<LinkField>(new LinkFieldSerializer());
         App.Modules.Manager().Scripts.Add($"~/manager/Navigation/assets/js/link-field.js?v={assetVersion}");
         App.Modules.Manager().Styles.Add($"~/manager/Navigation/assets/css/link-field.css?v={assetVersion}");
+
+        if (string.IsNullOrWhiteSpace(defaultBaseUrl))
+        {
+            defaultBaseUrl = builder.ApplicationServices.GetRequiredService<IConfiguration>().GetValue<string>("BaseUrl") ?? string.Empty;
+        }
+
+        // Set the default base url so that the application service can be used outside of an http context
+        ApplicationServiceAccessor.DefaultBaseUrl = defaultBaseUrl;
+
         return builder;
     }
 

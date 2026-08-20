@@ -8,7 +8,7 @@ namespace SoundInTheory.Piranha.Navigation.Models
 {
     public class LinkListOptions
     {
-        public Guid? SiteId { get; set; }
+        public Guid[] SiteIds { get; set; }
 
         public string Search { get; set; }
     }
