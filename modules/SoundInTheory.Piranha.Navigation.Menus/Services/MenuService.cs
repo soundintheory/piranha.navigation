@@ -1,4 +1,5 @@
 ﻿using Piranha;
+using Piranha.Cache;
 using SoundInTheory.Piranha.Navigation.Extensions;
 using SoundInTheory.Piranha.Navigation.Models;
 using SoundInTheory.Piranha.Navigation.Repositories;
@@ -19,11 +20,14 @@ namespace SoundInTheory.Piranha.Navigation.Services
 
         private readonly IServiceProvider _serviceProvider;
 
-        public MenuService(IMenuRepository repo, IApi api, IServiceProvider serviceProvider)
+        private readonly ICache _cache;
+
+        public MenuService(IMenuRepository repo, IApi api, IServiceProvider serviceProvider, ICache cache)
         {
             _repo = repo;
             _api = api;
             _serviceProvider = serviceProvider;
+            _cache = cache;
         }
 
         public async Task<IEnumerable<Menu>> GetAll(Guid siteId)
@@ -46,10 +50,14 @@ namespace SoundInTheory.Piranha.Navigation.Services
 
         public async Task<Menu> GetBySlug(Guid siteId, string slug, bool managerInit = false)
         {
-            var menu = await _repo.GetBySlug(siteId, slug).ConfigureAwait(false);
-            await OnLoad(menu, managerInit).ConfigureAwait(false);
+            var id = await _cache.GetOrAddAsync($"MenuId_{slug}", cacheNullValues: true, async () => await _repo.GetIdForSlug(siteId, slug));
 
-            return menu;
+            if (!id.HasValue)
+            {
+                return null;
+            }
+
+            return await GetById(id.Value, managerInit);
         }
 
         public Task SyncDefinitions(Guid siteId) 
@@ -147,10 +155,16 @@ namespace SoundInTheory.Piranha.Navigation.Services
 
         private async Task<MenuInfo> CreateOrUpdateFromDefinition(Guid siteId, MenuDefinition definition)
         {
-            var menu = await _repo.GetInfoBySlug(siteId, definition.Slug).ConfigureAwait(false)
-                ?? new MenuInfo { Slug = definition.Slug };
+            var id = await _repo.GetIdForSlug(siteId, definition.Slug).ConfigureAwait(false);
+            var menu = new MenuInfo { Slug = definition.Slug };
+
+            if (id.HasValue)
+            {
+                menu = (await _repo.GetInfoById(id.Value).ConfigureAwait(false)) ?? new MenuInfo { Slug = definition.Slug };
+            }
 
             if (
+                !id.HasValue ||
                 menu.Title != definition.Title || 
                 menu.Settings.MaxDepth != definition.MaxDepth || 
                 menu.Settings.EnabledOptions != definition.EnabledOptions ||
@@ -161,7 +175,9 @@ namespace SoundInTheory.Piranha.Navigation.Services
                 menu.IsSystemDefined = true;
                 menu.Settings.MaxDepth = definition.MaxDepth;
                 menu.Settings.EnabledOptions = definition.EnabledOptions;
+
                 await SaveInfo(menu);
+                _cache.RemoveValue($"MenuId_{menu.Slug}");
             }
 
             return menu;

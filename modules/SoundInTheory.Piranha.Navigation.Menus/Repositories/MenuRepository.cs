@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using Piranha;
 using Piranha.Models;
 using SoundInTheory.Piranha.Navigation.Extensions;
@@ -17,9 +18,12 @@ namespace SoundInTheory.Piranha.Navigation.Repositories
     {
         private readonly IApi _api;
 
-        public MenuRepository(IApi api)
+        private readonly IDb _db;
+
+        public MenuRepository(IApi api, IDb db)
         {
             _api = api;
+            _db = db;
         }
 
         public async Task<IEnumerable<Menu>> GetAll(Guid siteId)
@@ -40,16 +44,16 @@ namespace SoundInTheory.Piranha.Navigation.Repositories
             return menu;
         }
 
-        public async Task<Menu> GetBySlug(Guid siteId, string slug)
+        public async Task<MenuInfo> GetInfoById(Guid id)
         {
-            var menus = await _api.Content.GetAllAsync<NavigationMenu>(NavigationMenu.ContentGroupId).ContinueWith(t => t.Result.ToList());
-            return (Menu)menus.Find(x => x.Slug == slug);
+            var menu = await _api.Content.GetByIdAsync<NavigationMenu>(id);
+            return (MenuInfo)menu;
         }
 
-        public async Task<MenuInfo> GetInfoBySlug(Guid siteId, string slug)
+        public async Task<Guid?> GetIdForSlug(Guid siteId, string slug)
         {
-            var menus = await _api.Content.GetAllAsync<NavigationMenu>(NavigationMenu.ContentGroupId).ContinueWith(t => t.Result.ToList());
-            return (MenuInfo)menus.Find(x => x.Slug == slug);
+            var id = await _db.ContentFields.Where(x => x.FieldId == "Slug" && x.Value == slug && x.Content.TypeId == "NavigationMenu").Select(x => x.ContentId).FirstOrDefaultAsync();
+            return id == Guid.Empty ? null : id;
         }
 
         public async Task Save(MenuInfo model)

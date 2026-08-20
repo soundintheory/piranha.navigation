@@ -15,9 +15,9 @@ namespace SoundInTheory.Piranha.Navigation.Repositories
 
         Task<Menu> GetById(Guid id);
 
-        Task<Menu> GetBySlug(Guid siteId, string slug);
+        Task<MenuInfo> GetInfoById(Guid id);
 
-        Task<MenuInfo> GetInfoBySlug(Guid siteId, string slug);
+        Task<Guid?> GetIdForSlug(Guid siteId, string slug);
 
         Task Save(MenuInfo model);
 

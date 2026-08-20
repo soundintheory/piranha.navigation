@@ -26,20 +26,20 @@ namespace SoundInTheory.Piranha.Navigation.Models.Content
 
         public string Slug
         {
-            get => Content.Slug?.Value;
-            set => Content.Slug = value;
+            get => Content.Slug;
+            set => Content.Slug.Value = value;
         }
 
         public List<MenuItem> Items
         {
             get => Content.Items;
-            set => Content.Items = value;
+            set => Content.Items.Value = value;
         }
 
         public MenuSettings Settings
         {
             get => Content.Settings;
-            set => Content.Settings = value;
+            set => Content.Settings.Value = value;
         }
 
         public bool IsSystemDefined
@@ -83,25 +83,25 @@ namespace SoundInTheory.Piranha.Navigation.Models.Content
             /// Gets/sets the slug
             /// </summary>
             [Field]
-            public StringField Slug { get; set; }
+            public StringField Slug { get; set; } = new();
 
             /// <summary>
             /// The menu items
             /// </summary>
             [Field]
-            public MenuItemsField Items { get; set; }
+            public MenuItemsField Items { get; set; } = new();
 
             /// <summary>
             /// JSON serialized settings.
             /// </summary>
             [Field]
-            public MenuSettingsField Settings { get; set; }
+            public MenuSettingsField Settings { get; set; } = new();
 
             /// <summary>
             /// Whether the menu is defined by the system
             /// </summary>
             [Field]
-            public CheckBoxField IsSystemDefined { get; set; }
+            public CheckBoxField IsSystemDefined { get; set; } = new();
         }
     }
 }
