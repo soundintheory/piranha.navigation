@@ -266,6 +266,7 @@ form.was-validated select:valid ~ .select2-container--bootstrap4 .select2-select
 
 .link-field .input {
   flex: 1;
+  min-width: 0;
 }
 .link-field .form-control {
   white-space: nowrap;
