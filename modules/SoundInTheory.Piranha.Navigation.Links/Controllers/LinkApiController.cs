@@ -39,7 +39,8 @@ namespace SoundInTheory.Piranha.Navigation.Controllers
             return Content(
                 content: JsonConvert.SerializeObject(links, new JsonSerializerSettings
                 {
-                    ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    ContractResolver = new CamelCasePropertyNamesContractResolver(),
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 }),
                 contentType: MediaTypeNames.Application.Json,
                 contentEncoding: Encoding.UTF8
